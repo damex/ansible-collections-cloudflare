@@ -1,0 +1,8 @@
+---
+- name: "ensure cloudflare acme"
+  block:
+    - name: "ensure tasks are imported"
+      ansible.builtin.import_tasks: "cloudflare_acme_domains.yml"
+  tags:
+    - "cloudflare"
+    - "cloudflare_acme"

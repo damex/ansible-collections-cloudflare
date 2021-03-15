@@ -1,0 +1,16 @@
+---
+cloudflare_acme_terms_agreed: true
+cloudflare_acme_api_version: 2
+cloudflare_acme_directory_url: "https://acme-staging-v02.api.letsencrypt.org/directory"
+cloudflare_acme_account_email: ""
+cloudflare_acme_account_api_key: ""
+cloudflare_acme_api_token: ""
+cloudflare_acme_domains: []
+cloudflare_acme_challenge_type: "dns-01"
+cloudflare_acme_challenge_retries: 30
+cloudflare_acme_certificate_directory: ""
+cloudflare_acme_account_key_file: "{{ cloudflare_acme_certificate_directory }}/account"
+cloudflare_acme_domain_key_file: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}"
+cloudflare_acme_domain_csr_file: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.csr"
+cloudflare_acme_domain_crt_file: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.crt"
+cloudflare_acme_domain_chain_file: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.chain.crt"
