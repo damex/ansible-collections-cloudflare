@@ -1,0 +1,8 @@
+---
+- name: "ensure cloudflare dns"
+  block:
+    - name: "ensure tasks are imported"
+      ansible.builtin.import_tasks: "cloudflare_dns_zones.yml"
+  tags:
+    - "cloudflare"
+    - "cloudflare_dns"

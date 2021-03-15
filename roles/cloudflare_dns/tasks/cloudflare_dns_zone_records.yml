@@ -1,0 +1,61 @@
+---
+- name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} mx records"
+  community.general.cloudflare_dns:
+    zone: "{{ cloudflare_dns_zone_name }}"
+    record: "{{ cloudflare_dns_zone_mx_record.name }}"
+    type: "MX"
+    priority: "{{ cloudflare_dns_zone_mx_record.priority }}"
+    value: "{{ cloudflare_dns_zone_mx_record.value }}"
+    ttl: "{{ cloudflare_dns_zone_mx_record.ttl | default(cloudflare_dns_default_record_ttl) }}"
+    api_token: "{{ cloudflare_dns_zone_api_token }}"
+    account_email: "{{ cloudflare_dns_zone_account_email | default(omit) }}"
+    account_api_key: "{{ cloudflare_dns_zone_account_api_key | default(omit) }}"
+    state: "{{ cloudflare_dns_zone_mx_record.state | default(cloudflare_dns_default_record_state) }}"
+  loop: "{{ cloudflare_dns_zone_mx_records }}"
+  loop_control:
+    loop_var: "cloudflare_dns_zone_mx_record"
+
+- name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} a records"
+  community.general.cloudflare_dns:
+    zone: "{{ cloudflare_dns_zone_name }}"
+    record: "{{ cloudflare_dns_zone_a_record.name }}"
+    type: "A"
+    value: "{{ cloudflare_dns_zone_a_record.value }}"
+    ttl: "{{ cloudflare_dns_zone_a_record.ttl | default(cloudflare_dns_default_record_ttl) }}"
+    api_token: "{{ cloudflare_dns_zone_api_token }}"
+    account_email: "{{ cloudflare_dns_zone_account_email | default(omit) }}"
+    account_api_key: "{{ cloudflare_dns_zone_account_api_key | default(omit) }}"
+    state: "{{ cloudflare_dns_zone_a_record.state | default(cloudflare_dns_default_record_state) }}"
+  loop: "{{ cloudflare_dns_zone_a_records }}"
+  loop_control:
+    loop_var: "cloudflare_dns_zone_a_record"
+
+- name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} cname records"
+  community.general.cloudflare_dns:
+    zone: "{{ cloudflare_dns_zone_name }}"
+    record: "{{ cloudflare_dns_zone_cname_record.name }}"
+    type: "CNAME"
+    value: "{{ cloudflare_dns_zone_cname_record.value }}"
+    ttl: "{{ cloudflare_dns_zone_cname_record.ttl | default(cloudflare_dns_default_record_ttl) }}"
+    api_token: "{{ cloudflare_dns_zone_api_token }}"
+    account_email: "{{ cloudflare_dns_zone_account_email | default(omit) }}"
+    account_api_key: "{{ cloudflare_dns_zone_account_api_key | default(omit) }}"
+    state: "{{ cloudflare_dns_zone_cname_record.state | default(cloudflare_dns_default_record_state) }}"
+  loop: "{{ cloudflare_dns_zone_cname_records }}"
+  loop_control:
+    loop_var: "cloudflare_dns_zone_cname_record"
+
+- name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} txt records"
+  community.general.cloudflare_dns:
+    zone: "{{ cloudflare_dns_zone_name }}"
+    record: "{{ cloudflare_dns_zone_txt_record.name }}"
+    type: "TXT"
+    value: "{{ cloudflare_dns_zone_txt_record.value }}"
+    ttl: "{{ cloudflare_dns_zone_txt_record.ttl | default(cloudflare_dns_default_record_ttl) }}"
+    api_token: "{{ cloudflare_dns_zone_api_token }}"
+    account_email: "{{ cloudflare_dns_zone_account_email | default(omit) }}"
+    account_api_key: "{{ cloudflare_dns_zone_account_api_key | default(omit) }}"
+    state: "{{ cloudflare_dns_zone_txt_record.state | default(cloudflare_dns_default_record_state) }}"
+  loop: "{{ cloudflare_dns_zone_txt_records }}"
+  loop_control:
+    loop_var: "cloudflare_dns_zone_txt_record"
