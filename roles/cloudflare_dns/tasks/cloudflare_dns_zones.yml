@@ -1,0 +1,15 @@
+---
+- name: "ensure cloudflare dns zones"
+  include_tasks: "cloudflare_dns_zone_records.yml"
+  vars:
+    cloudflare_dns_zone_name: "{{ cloudflare_dns_zone.name | mandatory }}"
+    cloudflare_dns_zone_account_email: "{{ cloudflare_dns_zone.account_email | default(cloudflare_dns_account_email) }}"
+    cloudflare_dns_zone_account_api_key: "{{ cloudflare_dns_zone.account_api_key | default(cloudflare_dns_account_api_key) }}"
+    cloudflare_dns_zone_api_token: "{{ cloudflare_dns_zone.api_token | default(cloudflare_dns_api_token) }}"
+    cloudflare_dns_zone_mx_records: "{{ cloudflare_dns_zone.mx_records | default([]) }}"
+    cloudflare_dns_zone_a_records: "{{ cloudflare_dns_zone.a_records | default([]) }}"
+    cloudflare_dns_zone_cname_records: "{{ cloudflare_dns_zone.cname_records | default([]) }}"
+    cloudflare_dns_zone_txt_records: "{{ cloudflare_dns_zone.txt_records | default([]) }}"
+  loop: "{{ cloudflare_dns_zones }}"
+  loop_control:
+    loop_var: "cloudflare_dns_zone"
