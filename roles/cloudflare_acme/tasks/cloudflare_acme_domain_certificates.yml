@@ -66,7 +66,6 @@
       until: "cloudflare_acme_certificate_validate_challenge.authorizations[cloudflare_acme_domain_name].status == 'valid'"
       retries: "{{ cloudflare_acme_challenge_retries }}"
       register: "cloudflare_acme_certificate_validate_challenge"
-      delay: "{{ cloudflare_acme_certificate_challenge_ttl }}"
   always:
     - name: "ensure cloudflare dns challenge record is absent"
       import_role:
