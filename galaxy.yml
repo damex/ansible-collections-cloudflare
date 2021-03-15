@@ -1,7 +1,7 @@
 ---
 namespace: "damex"
 name: "cloudflare"
-version: "0.1.0"
+version: "0.1.1"
 readme: "README.md"
 authors:
   - "Roman Kuzmitskii <damex.pp@icloud.com>"
