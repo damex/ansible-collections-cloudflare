@@ -26,30 +26,26 @@
       Authorization: "Bearer {{ cloudflare_zone_api_token }}"
   when: "cloudflare_zone_api_token | length"
 
-- name: "get cloudflare account info"
+- name: "get cloudflare accounts info"
   ansible.builtin.uri:
     url: "https://api.cloudflare.com/client/v4/accounts"
     method: "GET"
     headers: "{{ cloudflare_zone_headers }}"
     body_format: "json"
-  register: "cloudflare_account_info"
+  register: "cloudflare_accounts_info"
 
-- name: "set cloudflare account {{ cloudflare_zone_account_name }} id"
-  ansible.builtin.set_fact:
-    cloudflare_account_id: "{{ cloudflare_account_info.json.result | selectattr('name', 'eq', cloudflare_zone_account_name) | map(attribute='id') | first }}"
-
-- name: "get cloudflare zone {{ cloudflare_zone_name }} info"
+- name: "get cloudflare zones info"
   ansible.builtin.uri:
-    url: "https://api.cloudflare.com/client/v4/zones?name={{ cloudflare_zone_name }}"
+    url: "https://api.cloudflare.com/client/v4/zones"
     method: "GET"
     headers: "{{ cloudflare_zone_headers }}"
     body_format: "json"
-  register: "cloudflare_zone_info"
+  register: "cloudflare_zones_info"
 
-- name: "set cloudflare zone {{ cloudflare_zone_name }} id"
+- name: "set cloudflare facts"
   ansible.builtin.set_fact:
-    cloudflare_zone_id: "{{ cloudflare_zone_info.json.result | map(attribute='id') | first }}"
-  when: "cloudflare_zone_info.json.result | length"
+    cloudflare_account_ids: "{{ cloudflare_accounts_info.json.result | items2dict(key_name='name', value_name='id') }}"
+    cloudflare_zone_ids: "{{ cloudflare_zones_info.json.result | items2dict(key_name='name', value_name='id') }}"
 
 - name: "create cloudflare zone {{ cloudflare_zone_name }}"
   ansible.builtin.uri:
@@ -60,7 +56,7 @@
     body:
       name: "{{ cloudflare_zone_name }}"
       account:
-        id: "{{ cloudflare_account_id }}"
+        id: "{{ cloudflare_account_ids[cloudflare_zone_account_name] }}"
       jump_start: "{{ cloudflare_zone_jump_start }}"
       type: "{{ cloudflare_zone_type }}"
-  when: "not cloudflare_zone_info.json.result"
+  when: "cloudflare_zone_ids[cloudflare_zone_name] is not defined"
