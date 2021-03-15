@@ -1,0 +1,15 @@
+---
+- name: "ensure cloudflare zones"
+  ansible.builtin.include_tasks: "cloudflare_zone.yml"
+  vars:
+    cloudflare_zone_name: "{{ cloudflare_zone.name }}"
+    cloudflare_zone_account_name: "{{ cloudflare_zone.account_name | default(cloudflare_zones_account_name) }}"
+    cloudflare_zone_account_email: "{{ cloudflare_zone.account_email | default(cloudflare_zones_account_email) }}"
+    cloudflare_zone_account_api_key: "{{ cloudflare_zone.account_api_key | default(cloudflare_zones_account_api_key) }}"
+    cloudflare_zone_api_token: "{{ cloudflare_zone.api_token | default(cloudflare_zones_api_token) }}"
+    cloudflare_zone_state: "{{ cloudflare_zone.state | default(cloudflare_zones_default_state) }}"
+    cloudflare_zone_jump_start: "{{ cloudflare_zone.jump_start | default(cloudflare_zones_default_jump_start) }}"
+    cloudflare_zone_type: "{{ cloudflare_zone.type | default(cloudflare_zones_default_type) }}"
+  loop: "{{ cloudflare_zones }}"
+  loop_control:
+    loop_var: "cloudflare_zone"
