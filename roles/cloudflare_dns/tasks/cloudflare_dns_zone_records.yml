@@ -14,6 +14,8 @@
   loop: "{{ cloudflare_dns_zone_mx_records }}"
   loop_control:
     loop_var: "cloudflare_dns_zone_mx_record"
+  async: "{{ ansible_check_mode | ternary(0, 60) }}"
+  poll: 0
 
 - name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} a records"
   community.general.cloudflare_dns:
@@ -29,6 +31,8 @@
   loop: "{{ cloudflare_dns_zone_a_records }}"
   loop_control:
     loop_var: "cloudflare_dns_zone_a_record"
+  async: "{{ ansible_check_mode | ternary(0, 60) }}"
+  poll: 0
 
 - name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} cname records"
   community.general.cloudflare_dns:
@@ -44,6 +48,8 @@
   loop: "{{ cloudflare_dns_zone_cname_records }}"
   loop_control:
     loop_var: "cloudflare_dns_zone_cname_record"
+  async: "{{ ansible_check_mode | ternary(0, 60) }}"
+  poll: 0
 
 - name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} txt records"
   community.general.cloudflare_dns:
@@ -59,3 +65,5 @@
   loop: "{{ cloudflare_dns_zone_txt_records }}"
   loop_control:
     loop_var: "cloudflare_dns_zone_txt_record"
+  async: "{{ ansible_check_mode | ternary(0, 60) }}"
+  poll: 0
