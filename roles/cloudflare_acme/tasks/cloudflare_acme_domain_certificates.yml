@@ -33,6 +33,7 @@
     csr: "{{ cloudflare_acme_domain_csr_file }}"
     dest: "{{ cloudflare_acme_domain_crt_file }}"
     fullchain_dest: "{{ cloudflare_acme_domain_chain_file }}"
+    remaining_days: "{{ cloudflare_acme_certificate_remaining_days }}"
     terms_agreed: "{{ cloudflare_acme_terms_agreed }}"
     acme_version: "{{ cloudflare_acme_api_version }}"
     acme_directory: "{{ cloudflare_acme_directory_url }}"
@@ -52,6 +53,7 @@
             txt_records:
               - name: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource }}"
                 value: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource_value }}"
+      when: "cloudflare_acme_certificate_challenge.authorizations[cloudflare_acme_domain_name].status == 'pending'"
     - name: "ensure challenge is validated"
       community.crypto.acme_certificate:
         account_key: "{{ cloudflare_acme_account_key_file }}"
@@ -60,6 +62,7 @@
         dest: "{{ cloudflare_acme_domain_crt_file }}"
         fullchain_dest: "{{ cloudflare_acme_domain_chain_file }}"
         data: "{{ cloudflare_acme_certificate_challenge }}"
+        remaining_days: "{{ cloudflare_acme_certificate_remaining_days }}"
         terms_agreed: "{{ cloudflare_acme_terms_agreed }}"
         acme_version: "{{ cloudflare_acme_api_version }}"
         acme_directory: "{{ cloudflare_acme_directory_url }}"
@@ -80,4 +83,5 @@
               - name: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource }}"
                 value: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource_value }}"
                 state: "absent"
+      when: "cloudflare_acme_certificate_challenge.authorizations[cloudflare_acme_domain_name].status == 'pending'"
   when: "cloudflare_acme_certificate_challenge.changed"
