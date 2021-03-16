@@ -54,7 +54,7 @@
               - name: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource }}"
                 value: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource_value }}"
       when: "cloudflare_acme_certificate_challenge.authorizations[cloudflare_acme_domain_name].status == 'pending'"
-    - name: "ensure challenge is validated"
+    - name: "ensure cloudflare acme challenge is validated"
       community.crypto.acme_certificate:
         account_key: "{{ cloudflare_acme_account_key_file }}"
         challenge: "{{ cloudflare_acme_challenge_type }}"
