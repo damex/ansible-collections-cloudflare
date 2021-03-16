@@ -6,7 +6,6 @@ cloudflare_acme_account_email: ""
 cloudflare_acme_account_api_key: ""
 cloudflare_acme_api_token: ""
 cloudflare_acme_domains: []
-cloudflare_acme_challenge_type: "dns-01"
 cloudflare_acme_challenge_retries: 30
 cloudflare_acme_certificate_remaining_days: 30
 cloudflare_acme_certificate_directory: ""
