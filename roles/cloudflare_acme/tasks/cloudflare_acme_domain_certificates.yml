@@ -28,6 +28,7 @@
 
 - name: "ensure cloudflare acme challenge"
   community.crypto.acme_certificate:
+    account_email: "{{ cloudflare_acme_domain_account_email | default(omit) }}"
     account_key: "{{ cloudflare_acme_account_key_file }}"
     challenge: "dns-01"
     csr: "{{ cloudflare_acme_domain_csr_file }}"
@@ -47,15 +48,16 @@
       vars:
         cloudflare_dns_zones:
           - name: "{{ cloudflare_acme_domain_zone }}"
-            account_email: "{{ cloudflare_acme_domain_account_email | default(omit) }}"
-            account_api_key: "{{ cloudflare_acme_domain_account_api_key | default(omit) }}"
-            api_token: "{{ cloudflare_acme_domain_api_token | default(omit) }}"
+            account_email: "{{ cloudflare_acme_domain_cloudflare_account_email | default(omit) }}"
+            account_api_key: "{{ cloudflare_acme_domain_cloudflare_account_api_key | default(omit) }}"
+            api_token: "{{ cloudflare_acme_domain_cloudflare_api_token | default(omit) }}"
             txt_records:
               - name: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource }}"
                 value: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource_value }}"
       when: "cloudflare_acme_certificate_challenge.authorizations[cloudflare_acme_domain_name].status == 'pending'"
     - name: "ensure cloudflare acme challenge is validated"
       community.crypto.acme_certificate:
+        account_email: "{{ cloudflare_acme_domain_account_email | default(omit) }}"
         account_key: "{{ cloudflare_acme_account_key_file }}"
         challenge: "dns-01"
         csr: "{{ cloudflare_acme_domain_csr_file }}"
@@ -76,9 +78,9 @@
       vars:
         cloudflare_dns_zones:
           - name: "{{ cloudflare_acme_domain_zone }}"
-            account_email: "{{ cloudflare_acme_domain_account_email | default(omit) }}"
-            account_api_key: "{{ cloudflare_acme_domain_account_api_key | default(omit) }}"
-            api_token: "{{ cloudflare_acme_domain_api_token | default(omit) }}"
+            account_email: "{{ cloudflare_acme_domain_cloudflare_account_email | default(omit) }}"
+            account_api_key: "{{ cloudflare_acme_domain_cloudflare_account_api_key | default(omit) }}"
+            api_token: "{{ cloudflare_acme_domain_cloudflare_api_token | default(omit) }}"
             txt_records:
               - name: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource }}"
                 value: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource_value }}"
