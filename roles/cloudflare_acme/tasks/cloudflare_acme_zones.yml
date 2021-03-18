@@ -1,0 +1,13 @@
+---
+- name: "ensure cloudflare acme zones"
+  include_tasks: "cloudflare_acme_zone_domains.yml"
+  vars:
+    cloudflare_acme_zone_name: "{{ cloudflare_acme_zone.name | mandatory }}"
+    cloudflare_acme_zone_domains: "{{ cloudflare_acme_zone.domains | mandatory }}"
+    cloudflare_acme_zone_cloudflare_account_email: "{{ cloudflare_acme_zone.cloudflare_account_email | default(cloudflare_acme_cloudflare_account_email) }}"
+    cloudflare_acme_zone_cloudflare_account_api_key: "{{ cloudflare_acme_zone.cloudflare_account_api_key | default(cloudflare_acme_cloudflare_account_api_key) }}"
+    cloudflare_acme_zone_cloudflare_api_token: "{{ cloudflare_acme_zone.cloudflare_api_token | default(cloudflare_acme_cloudflare_api_token) }}"
+  loop: "{{ cloudflare_acme_zones }}"
+  loop_control:
+    label: "{{ cloudflare_acme_zone_name }}"
+    loop_var: "cloudflare_acme_zone"
