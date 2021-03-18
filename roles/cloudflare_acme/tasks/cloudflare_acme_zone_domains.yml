@@ -1,0 +1,9 @@
+---
+- name: "ensure cloudflare acme zone domain certificates"
+  include_tasks: "cloudflare_acme_zone_domain_certificates.yml"
+  vars:
+    cloudflare_acme_domain_name: "{{ cloudflare_acme_zone_domain.name }}"
+  loop: "{{ cloudflare_acme_zone_domains }}"
+  loop_control:
+    label: "{{ cloudflare_acme_domain_name }}"
+    loop_var: "cloudflare_acme_zone_domain"
