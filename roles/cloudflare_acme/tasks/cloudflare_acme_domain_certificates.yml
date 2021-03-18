@@ -52,7 +52,7 @@
             account_api_key: "{{ cloudflare_acme_domain_cloudflare_account_api_key | default(omit) }}"
             api_token: "{{ cloudflare_acme_domain_cloudflare_api_token | default(omit) }}"
             txt_records:
-              - name: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource }}"
+              - name: "_acme-challenge.{{ cloudflare_acme_domain_name }}"
                 value: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource_value }}"
       when: "cloudflare_acme_certificate_challenge.authorizations[cloudflare_acme_domain_name].status == 'pending'"
     - name: "ensure cloudflare acme challenge is validated"
@@ -82,8 +82,7 @@
             account_api_key: "{{ cloudflare_acme_domain_cloudflare_account_api_key | default(omit) }}"
             api_token: "{{ cloudflare_acme_domain_cloudflare_api_token | default(omit) }}"
             txt_records:
-              - name: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource }}"
-                value: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource_value }}"
+              - name: "_acme-challenge.{{ cloudflare_acme_domain_name }}"
                 state: "absent"
       when: "cloudflare_acme_certificate_challenge.authorizations[cloudflare_acme_domain_name].status == 'pending'"
   when: "cloudflare_acme_certificate_challenge.changed"
