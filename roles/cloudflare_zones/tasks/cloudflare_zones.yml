@@ -12,4 +12,5 @@
     cloudflare_zone_type: "{{ cloudflare_zone.type | default(cloudflare_zones_default_type) }}"
   loop: "{{ cloudflare_zones }}"
   loop_control:
+    label: "{{ cloudflare_zone_name }}"
     loop_var: "cloudflare_zone"
