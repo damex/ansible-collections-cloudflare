@@ -22,6 +22,8 @@
     terms_agreed: "{{ cloudflare_acme_terms_agreed }}"
     acme_version: "{{ cloudflare_acme_api_version }}"
     acme_directory: "{{ cloudflare_acme_directory_url }}"
+  until: "not cloudflare_acme_certificate_challenge.failed"
+  retries: "{{ cloudflare_acme_challenge_retries }}"
   register: "cloudflare_acme_certificate_challenge"
 
 - name: "ensure cloudflare acme dns challenge"
@@ -38,7 +40,8 @@
             txt_records:
               - name: "_acme-challenge.{{ cloudflare_acme_domain_name }}"
                 value: "{{ cloudflare_acme_certificate_challenge.challenge_data[cloudflare_acme_domain_name]['dns-01'].resource_value }}"
-      when: "cloudflare_acme_certificate_challenge.authorizations[cloudflare_acme_domain_name].status == 'pending'"
+      when:
+        - "cloudflare_acme_certificate_challenge.authorizations[cloudflare_acme_domain_name].status == 'pending'"
     - name: "ensure cloudflare acme challenge is validated"
       community.crypto.acme_certificate:
         account_email: "{{ cloudflare_acme_account_email | default(omit) }}"
@@ -52,7 +55,9 @@
         terms_agreed: "{{ cloudflare_acme_terms_agreed }}"
         acme_version: "{{ cloudflare_acme_api_version }}"
         acme_directory: "{{ cloudflare_acme_directory_url }}"
-      until: "cloudflare_acme_certificate_validate_challenge.authorizations[cloudflare_acme_domain_name].status == 'valid'"
+      until:
+        - "cloudflare_acme_certificate_validate_challenge.authorizations[cloudflare_acme_domain_name] is defined"
+        - "cloudflare_acme_certificate_validate_challenge.authorizations[cloudflare_acme_domain_name].status == 'valid'"
       retries: "{{ cloudflare_acme_challenge_retries }}"
       register: "cloudflare_acme_certificate_validate_challenge"
   always:
@@ -69,4 +74,6 @@
               - name: "_acme-challenge.{{ cloudflare_acme_domain_name }}"
                 state: "absent"
       when: "cloudflare_acme_certificate_challenge.authorizations[cloudflare_acme_domain_name].status == 'pending'"
-  when: "cloudflare_acme_certificate_challenge.changed"
+  when:
+    - "cloudflare_acme_certificate_challenge.changed"
+    - "cloudflare_acme_certificate_challenge.authorizations[cloudflare_acme_domain_name] is defined"
