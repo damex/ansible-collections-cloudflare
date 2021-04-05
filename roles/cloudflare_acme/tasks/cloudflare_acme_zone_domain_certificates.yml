@@ -29,7 +29,7 @@
 - name: "ensure cloudflare acme dns challenge"
   block:
     - name: "ensure cloudflare dns challenge record"
-      ansible.builtin.import_role:
+      ansible.builtin.include_role:
         name: "damex.cloudflare.cloudflare_dns"
       vars:
         cloudflare_dns_zones:
@@ -62,7 +62,7 @@
       register: "cloudflare_acme_certificate_validate_challenge"
   always:
     - name: "ensure cloudflare dns challenge record is absent"
-      ansible.builtin.import_role:
+      ansible.builtin.include_role:
         name: "damex.cloudflare.cloudflare_dns"
       vars:
         cloudflare_dns_zones:
