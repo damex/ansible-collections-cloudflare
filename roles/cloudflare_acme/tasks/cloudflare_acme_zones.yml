@@ -1,6 +1,6 @@
 ---
 - name: "ensure cloudflare acme zones"
-  include_tasks: "cloudflare_acme_zone_domains.yml"
+  ansible.builtin.include_tasks: "cloudflare_acme_zone_domains.yml"
   vars:
     cloudflare_acme_zone_name: "{{ cloudflare_acme_zone.name | mandatory }}"
     cloudflare_acme_zone_domains: "{{ cloudflare_acme_zone.domains | mandatory }}"
