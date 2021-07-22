@@ -39,7 +39,7 @@
             account_api_key: "{{ cloudflare_acme_zone_cloudflare_account_api_key | default(omit) }}"
             api_token: "{{ cloudflare_acme_zone_cloudflare_api_token | default(omit) }}"
             txt_records:
-              - name: "_acme-challenge.{{ item }}"
+              - name: "{{ cloudflare_acme_certificate_challenge.challenge_data[item]['dns-01'].record }}"
                 value: "{{ cloudflare_acme_certificate_challenge.challenge_data[item]['dns-01'].resource_value }}"
       loop: "{{ cloudflare_acme_domain_names + [cloudflare_acme_domain_name] }}"
       when:
@@ -72,7 +72,7 @@
             account_api_key: "{{ cloudflare_acme_zone_cloudflare_account_api_key | default(omit) }}"
             api_token: "{{ cloudflare_acme_zone_cloudflare_api_token | default(omit) }}"
             txt_records:
-              - name: "_acme-challenge.{{ item }}"
+              - name: "{{ cloudflare_acme_certificate_challenge.challenge_data[item]['dns-01'].record }}"
                 state: "absent"
       loop: "{{ cloudflare_acme_domain_names + [cloudflare_acme_domain_name] }}"
       when: "cloudflare_acme_certificate_challenge.authorizations[item].status == 'pending'"
