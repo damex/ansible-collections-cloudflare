@@ -4,6 +4,8 @@ on: # yamllint disable-line rule:truthy
   push:
     paths:
       - "galaxy.yml"
+    branches:
+      - "main"
 
 jobs:
   ansible-galaxy:
