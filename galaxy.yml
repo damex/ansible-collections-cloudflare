@@ -9,3 +9,5 @@ license_file: "LICENSE"
 tags:
   - "cloudflare"
 repository: "https://github.com/damex/ansible-collections-cloudflare"
+dependencies:
+  - "community.crypto": "*"
