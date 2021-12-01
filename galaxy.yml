@@ -10,4 +10,5 @@ tags:
   - "cloudflare"
 repository: "https://github.com/damex/ansible-collections-cloudflare"
 dependencies:
+  "community.general": "*"
   "community.crypto": "*"
