@@ -3,5 +3,6 @@ cloudflare_dns_account_email: ""
 cloudflare_dns_account_api_key: ""
 cloudflare_dns_api_token: ""
 cloudflare_dns_zones: []
+cloudflare_dns_default_record_proxied: false
 cloudflare_dns_default_record_state: "present"
 cloudflare_dns_default_record_ttl: 3600
