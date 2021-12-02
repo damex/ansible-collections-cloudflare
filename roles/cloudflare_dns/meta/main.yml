@@ -3,7 +3,7 @@ galaxy_info:
   author: "Roman Kuzmitskii <damex.pp@icloud.com>"
   description: "cloudflare dns role"
   license: "GPLv2"
-  min_ansible_version: "2.10.6"
+  min_ansible_version: "2.12.0"
   galaxy_tags: []
   platforms:
     - name: "Debian"
