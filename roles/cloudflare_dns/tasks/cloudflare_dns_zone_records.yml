@@ -20,7 +20,7 @@
   register: "cloudflare_dns_zone_mx_records_jobs"
 
 - name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} mx records jobs results"
-  async_status:
+  ansible.builtin.async_status:
     jid: "{{ cloudflare_dns_zone_mx_record_job.ansible_job_id }}"
   register: "cloudflare_dns_zone_mx_record_job_result"
   until: "cloudflare_dns_zone_mx_record_job_result.finished"
@@ -51,7 +51,7 @@
   register: "cloudflare_dns_zone_a_records_jobs"
 
 - name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} a records jobs results"
-  async_status:
+  ansible.builtin.async_status:
     jid: "{{ cloudflare_dns_zone_a_record_job.ansible_job_id }}"
   register: "cloudflare_dns_zone_a_record_job_result"
   until: "cloudflare_dns_zone_a_record_job_result.finished"
@@ -82,7 +82,7 @@
   register: "cloudflare_dns_zone_cname_records_jobs"
 
 - name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} cname records jobs results"
-  async_status:
+  ansible.builtin.async_status:
     jid: "{{ cloudflare_dns_zone_cname_record_job.ansible_job_id }}"
   register: "cloudflare_dns_zone_cname_record_job_result"
   until: "cloudflare_dns_zone_cname_record_job_result.finished"
@@ -112,7 +112,7 @@
   register: "cloudflare_dns_zone_txt_records_jobs"
 
 - name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} txt records jobs results"
-  async_status:
+  ansible.builtin.async_status:
     jid: "{{ cloudflare_dns_zone_txt_record_job.ansible_job_id }}"
   register: "cloudflare_dns_zone_txt_record_job_result"
   until: "cloudflare_dns_zone_txt_record_job_result.finished"
