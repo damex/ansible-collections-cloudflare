@@ -1,58 +1,58 @@
 ---
-- name: "ensure cloudflare credentials"
+- name: ensure cloudflare credentials
   ansible.builtin.fail:
-    msg: "Please make sure that cloudflare_zone account_email and account_api_key or api_token is defined!"
-  when: "(cloudflare_zone_account_email | length and not cloudflare_zone_account_api_key and cloudflare_zone_api_token | length) or
-         (not cloudflare_zone_account_email and cloudflare_zone_account_api_key | length and cloudflare_zone_api_token | length) or
-         (cloudflare_zone_account_email | length and cloudflare_zone_account_api_key | length and cloudflare_zone_api_token | length)"
+    msg: Please make sure that cloudflare_zone account_email and account_api_key or api_token is defined!
+  when: (cloudflare_zone_account_email | length and not cloudflare_zone_account_api_key and cloudflare_zone_api_token | length) or
+        (not cloudflare_zone_account_email and cloudflare_zone_account_api_key | length and cloudflare_zone_api_token | length) or
+        (cloudflare_zone_account_email | length and cloudflare_zone_account_api_key | length and cloudflare_zone_api_token | length)
 
-- name: "ensure cloudflare credentials"
+- name: ensure cloudflare credentials
   ansible.builtin.fail:
-    msg: "Please make sure that cloudflare_zone account_name is defiend!"
-  when: "not cloudflare_zone_account_name"
+    msg: Please make sure that cloudflare_zone account_name is defiend!
+  when: not cloudflare_zone_account_name
 
-- name: "set cloudflare X-Auth-Email and X-Auth-Key headers"
+- name: set cloudflare X-Auth-Email and X-Auth-Key headers
   ansible.builtin.set_fact:
     cloudflare_zone_headers:
       X-Auth-Email: "{{ cloudflare_zone_account_email }}"
       X-Auth-Key: "{{ cloudflare_zone_account_api_key }}"
   when:
-    - "cloudflare_zone_account_email | length"
-    - "cloudflare_zone_account_api_key | length"
+    - cloudflare_zone_account_email | length
+    - cloudflare_zone_account_api_key | length
 
-- name: "set cloudflare Authorization headers"
+- name: set cloudflare Authorization headers
   ansible.builtin.set_fact:
     cloudflare_zone_headers:
-      Authorization: "Bearer {{ cloudflare_zone_api_token }}"
-  when: "cloudflare_zone_api_token | length"
+      Authorization: Bearer {{ cloudflare_zone_api_token }}
+  when: cloudflare_zone_api_token | length
 
-- name: "get cloudflare accounts info"
+- name: get cloudflare accounts info
   ansible.builtin.uri:
-    url: "https://api.cloudflare.com/client/v4/accounts"
-    method: "GET"
+    url: https://api.cloudflare.com/client/v4/accounts
+    method: GET
     headers: "{{ cloudflare_zone_headers }}"
-    body_format: "json"
-  register: "cloudflare_accounts_info"
+    body_format: json
+  register: cloudflare_accounts_info
 
-- name: "get cloudflare zones info"
+- name: get cloudflare zones info
   ansible.builtin.uri:
-    url: "https://api.cloudflare.com/client/v4/zones"
-    method: "GET"
+    url: https://api.cloudflare.com/client/v4/zones
+    method: GET
     headers: "{{ cloudflare_zone_headers }}"
-    body_format: "json"
-  register: "cloudflare_zones_info"
+    body_format: json
+  register: cloudflare_zones_info
 
-- name: "set cloudflare facts"
+- name: set cloudflare facts
   ansible.builtin.set_fact:
     cloudflare_account_ids: "{{ cloudflare_accounts_info.json.result | default([]) | items2dict(key_name='name', value_name='id') }}"
     cloudflare_zone_ids: "{{ cloudflare_zones_info.json.result | default ([]) | items2dict(key_name='name', value_name='id') }}"
 
-- name: "create cloudflare zone {{ cloudflare_zone_name }}"
+- name: create cloudflare zone {{ cloudflare_zone_name }}
   ansible.builtin.uri:
-    url: "https://api.cloudflare.com/client/v4/zones"
-    method: "POST"
+    url: https://api.cloudflare.com/client/v4/zones
+    method: POST
     headers: "{{ cloudflare_zone_headers }}"
-    body_format: "json"
+    body_format: json
     body:
       name: "{{ cloudflare_zone_name }}"
       account:
@@ -60,5 +60,5 @@
       jump_start: "{{ cloudflare_zone_jump_start }}"
       type: "{{ cloudflare_zone_type }}"
   when:
-    - "cloudflare_account_ids[cloudflare_zone_account_name] is defined"
-    - "cloudflare_zone_ids[cloudflare_zone_name] is not defined"
+    - cloudflare_account_ids[cloudflare_zone_account_name] is defined
+    - cloudflare_zone_ids[cloudflare_zone_name] is not defined

@@ -1,14 +1,14 @@
 ---
-- name: "ensure cloudflare acme"
+- name: ensure cloudflare acme
   block:
-    - name: "ensure cloudflare acme prerequisites"
-      ansible.builtin.import_tasks: "cloudflare_acme_prerequisites.yml"
-    - name: "ensure cloudflare acme directory"
-      ansible.builtin.import_tasks: "cloudflare_acme_directory.yml"
-    - name: "ensure cloudflare acme account"
-      ansible.builtin.import_tasks: "cloudflare_acme_account.yml"
-    - name: "ensure cloudflare acme zones"
-      ansible.builtin.import_tasks: "cloudflare_acme_zones.yml"
+    - name: ensure cloudflare acme prerequisites
+      ansible.builtin.import_tasks: cloudflare_acme_prerequisites.yml
+    - name: ensure cloudflare acme directory
+      ansible.builtin.import_tasks: cloudflare_acme_directory.yml
+    - name: ensure cloudflare acme account
+      ansible.builtin.import_tasks: cloudflare_acme_account.yml
+    - name: ensure cloudflare acme zones
+      ansible.builtin.import_tasks: cloudflare_acme_zones.yml
   tags:
-    - "cloudflare"
-    - "cloudflare_acme"
+    - cloudflare
+    - cloudflare_acme
