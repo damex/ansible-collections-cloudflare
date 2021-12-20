@@ -1,15 +1,15 @@
 ---
 galaxy_info:
-  author: "Roman Kuzmitskii <damex.pp@icloud.com>"
-  description: "cloudflare zones role"
-  license: "GPLv2"
-  min_ansible_version: "2.12.0"
+  author: Roman Kuzmitskii <damex.pp@icloud.com>
+  description: cloudflare zones role
+  license: GPLv2
+  min_ansible_version: 2.12.0
   galaxy_tags: []
   platforms:
-    - name: "Debian"
+    - name: Debian
       versions:
-        - "buster"
-    - name: "Ubuntu"
+        - buster
+    - name: Ubuntu
       versions:
-        - "focal"
+        - focal
 dependencies: []

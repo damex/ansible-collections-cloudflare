@@ -1,14 +1,14 @@
 ---
-namespace: "damex"
-name: "cloudflare"
-version: "0.3.2"
-readme: "README.md"
+namespace: damex
+name: cloudflare
+version: 0.3.2
+readme: README.md
 authors:
-  - "Roman Kuzmitskii <damex.pp@icloud.com>"
-license_file: "LICENSE"
+  - Roman Kuzmitskii <damex.pp@icloud.com>
+license_file: LICENSE
 tags:
-  - "cloudflare"
-repository: "https://github.com/damex/ansible-collections-cloudflare"
+  - cloudflare
+repository: https://github.com/damex/ansible-collections-cloudflare
 dependencies:
-  "community.general": "*"
-  "community.crypto": "*"
+  community.general: "*"
+  community.crypto: "*"

@@ -1,5 +1,5 @@
 ---
-- name: "ensure cloudflare acme account key"
+- name: ensure cloudflare acme account key
   community.crypto.openssl_privatekey:
     path: "{{ cloudflare_acme_account_key_file }}"
     mode: "0640"

@@ -1,21 +1,21 @@
 ---
-- name: "ensure cloudflare acme domain key"
+- name: ensure cloudflare acme domain key
   community.crypto.openssl_privatekey:
     path: "{{ cloudflare_acme_domain_key_file }}"
     mode: "0640"
 
-- name: "ensure cloudflare acme csr"
+- name: ensure cloudflare acme csr
   community.crypto.openssl_csr:
     path: "{{ cloudflare_acme_domain_csr_file }}"
     privatekey_path: "{{ cloudflare_acme_domain_key_file }}"
     common_name: "{{ cloudflare_acme_domain_name }}"
     subject_alt_name: "{{ cloudflare_acme_domain_names | map('regex_replace', '^', 'DNS:') }}"
 
-- name: "ensure cloudflare acme challenge"
+- name: ensure cloudflare acme challenge
   community.crypto.acme_certificate:
     account_email: "{{ cloudflare_acme_account_email | default(omit) }}"
     account_key: "{{ cloudflare_acme_account_key_file }}"
-    challenge: "dns-01"
+    challenge: dns-01
     csr: "{{ cloudflare_acme_domain_csr_file }}"
     dest: "{{ cloudflare_acme_domain_crt_file }}"
     fullchain_dest: "{{ cloudflare_acme_domain_chain_file }}"
@@ -23,15 +23,15 @@
     terms_agreed: "{{ cloudflare_acme_terms_agreed }}"
     acme_version: "{{ cloudflare_acme_api_version }}"
     acme_directory: "{{ cloudflare_acme_directory_url }}"
-  until: "not cloudflare_acme_certificate_challenge.failed"
+  until: not cloudflare_acme_certificate_challenge.failed
   retries: "{{ cloudflare_acme_challenge_retries }}"
-  register: "cloudflare_acme_certificate_challenge"
+  register: cloudflare_acme_certificate_challenge
 
-- name: "ensure cloudflare acme dns challenge"
+- name: ensure cloudflare acme dns challenge
   block:
-    - name: "ensure cloudflare dns challenge record"
+    - name: ensure cloudflare dns challenge record
       ansible.builtin.include_role:
-        name: "damex.cloudflare.cloudflare_dns"
+        name: damex.cloudflare.cloudflare_dns
       vars:
         cloudflare_dns_zones:
           - name: "{{ cloudflare_acme_zone_name }}"
@@ -43,12 +43,12 @@
                 value: "{{ cloudflare_acme_certificate_challenge.challenge_data[item]['dns-01'].resource_value }}"
       loop: "{{ cloudflare_acme_domain_names + [cloudflare_acme_domain_name] }}"
       when:
-        - "cloudflare_acme_certificate_challenge.authorizations[item].status == 'pending'"
-    - name: "ensure cloudflare acme challenge is validated"
+        - cloudflare_acme_certificate_challenge.authorizations[item].status == "pending"
+    - name: ensure cloudflare acme challenge is validated
       community.crypto.acme_certificate:
         account_email: "{{ cloudflare_acme_account_email | default(omit) }}"
         account_key: "{{ cloudflare_acme_account_key_file }}"
-        challenge: "dns-01"
+        challenge: dns-01
         csr: "{{ cloudflare_acme_domain_csr_file }}"
         dest: "{{ cloudflare_acme_domain_crt_file }}"
         fullchain_dest: "{{ cloudflare_acme_domain_chain_file }}"
@@ -60,11 +60,11 @@
       until:
         - "'pending' not in cloudflare_acme_domain_names + [cloudflare_acme_domain_name] | map('extract', cloudflare_acme_certificate_validate_challenge.authorizations) | map(attribute='challenges') | flatten | map(attribute='status')"
       retries: "{{ cloudflare_acme_challenge_retries }}"
-      register: "cloudflare_acme_certificate_validate_challenge"
+      register: cloudflare_acme_certificate_validate_challenge
   always:
-    - name: "ensure cloudflare dns challenge record is absent"
+    - name: ensure cloudflare dns challenge record is absent
       ansible.builtin.include_role:
-        name: "damex.cloudflare.cloudflare_dns"
+        name: damex.cloudflare.cloudflare_dns
       vars:
         cloudflare_dns_zones:
           - name: "{{ cloudflare_acme_zone_name }}"
@@ -73,8 +73,8 @@
             api_token: "{{ cloudflare_acme_zone_cloudflare_api_token | default(omit) }}"
             txt_records:
               - name: "{{ cloudflare_acme_certificate_challenge.challenge_data[item]['dns-01'].record }}"
-                state: "absent"
+                state: absent
       loop: "{{ cloudflare_acme_domain_names + [cloudflare_acme_domain_name] }}"
-      when: "cloudflare_acme_certificate_challenge.authorizations[item].status == 'pending'"
+      when: cloudflare_acme_certificate_challenge.authorizations[item].status == "pending"
   when:
-    - "cloudflare_acme_certificate_challenge.changed"
+    - cloudflare_acme_certificate_challenge.changed

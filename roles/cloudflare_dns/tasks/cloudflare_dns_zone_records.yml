@@ -1,9 +1,9 @@
 ---
-- name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} mx records"
+- name: ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} mx records
   community.general.cloudflare_dns:
     zone: "{{ cloudflare_dns_zone_name }}"
     record: "{{ cloudflare_dns_zone_mx_record.name }}"
-    type: "MX"
+    type: MX
     priority: "{{ cloudflare_dns_zone_mx_record.priority }}"
     value: "{{ cloudflare_dns_zone_mx_record.value | default(omit) }}"
     ttl: "{{ cloudflare_dns_zone_mx_record.ttl | default(cloudflare_dns_default_record_ttl) }}"
@@ -13,28 +13,28 @@
     state: "{{ cloudflare_dns_zone_mx_record.state | default(cloudflare_dns_default_record_state) }}"
   loop: "{{ cloudflare_dns_zone_mx_records }}"
   loop_control:
-    loop_var: "cloudflare_dns_zone_mx_record"
+    loop_var: cloudflare_dns_zone_mx_record
   async: "{{ ansible_check_mode | ternary(0, 60) }}"
   poll: 0
   changed_when: false
-  register: "cloudflare_dns_zone_mx_records_jobs"
+  register: cloudflare_dns_zone_mx_records_jobs
 
-- name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} mx records jobs results"
+- name: ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} mx records jobs results
   ansible.builtin.async_status:
     jid: "{{ cloudflare_dns_zone_mx_record_job.ansible_job_id }}"
-  register: "cloudflare_dns_zone_mx_record_job_result"
-  until: "cloudflare_dns_zone_mx_record_job_result.finished"
+  register: cloudflare_dns_zone_mx_record_job_result
+  until: cloudflare_dns_zone_mx_record_job_result.finished
   retries: 30
   loop: "{{ cloudflare_dns_zone_mx_records_jobs.results }}"
   loop_control:
     label: "{{ cloudflare_dns_zone_mx_record_job.cloudflare_dns_zone_mx_record.name }}"
-    loop_var: "cloudflare_dns_zone_mx_record_job"
+    loop_var: cloudflare_dns_zone_mx_record_job
 
-- name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} a records jobs"
+- name: ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} a records jobs
   community.general.cloudflare_dns:
     zone: "{{ cloudflare_dns_zone_name }}"
     record: "{{ cloudflare_dns_zone_a_record.name }}"
-    type: "A"
+    type: A
     value: "{{ cloudflare_dns_zone_a_record.value | default(omit) }}"
     ttl: "{{ cloudflare_dns_zone_a_record.ttl | default(cloudflare_dns_default_record_ttl) }}"
     proxied: "{{ cloudflare_dns_zone_a_record.proxied | default(cloudflare_dns_default_record_proxied) }}"
@@ -44,28 +44,28 @@
     state: "{{ cloudflare_dns_zone_a_record.state | default(cloudflare_dns_default_record_state) }}"
   loop: "{{ cloudflare_dns_zone_a_records }}"
   loop_control:
-    loop_var: "cloudflare_dns_zone_a_record"
+    loop_var: cloudflare_dns_zone_a_record
   async: "{{ ansible_check_mode | ternary(0, 60) }}"
   poll: 0
   changed_when: false
-  register: "cloudflare_dns_zone_a_records_jobs"
+  register: cloudflare_dns_zone_a_records_jobs
 
-- name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} a records jobs results"
+- name: ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} a records jobs results
   ansible.builtin.async_status:
     jid: "{{ cloudflare_dns_zone_a_record_job.ansible_job_id }}"
-  register: "cloudflare_dns_zone_a_record_job_result"
-  until: "cloudflare_dns_zone_a_record_job_result.finished"
+  register: cloudflare_dns_zone_a_record_job_result
+  until: cloudflare_dns_zone_a_record_job_result.finished
   retries: 30
   loop: "{{ cloudflare_dns_zone_a_records_jobs.results }}"
   loop_control:
     label: "{{ cloudflare_dns_zone_a_record_job.cloudflare_dns_zone_a_record.name }}"
-    loop_var: "cloudflare_dns_zone_a_record_job"
+    loop_var: cloudflare_dns_zone_a_record_job
 
-- name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} cname records"
+- name: ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} cname records
   community.general.cloudflare_dns:
     zone: "{{ cloudflare_dns_zone_name }}"
     record: "{{ cloudflare_dns_zone_cname_record.name }}"
-    type: "CNAME"
+    type: CNAME
     value: "{{ cloudflare_dns_zone_cname_record.value | default(omit) }}"
     ttl: "{{ cloudflare_dns_zone_cname_record.ttl | default(cloudflare_dns_default_record_ttl) }}"
     proxied: "{{ cloudflare_dns_zone_cname_record.proxied | default(cloudflare_dns_default_record_proxied) }}"
@@ -75,28 +75,28 @@
     state: "{{ cloudflare_dns_zone_cname_record.state | default(cloudflare_dns_default_record_state) }}"
   loop: "{{ cloudflare_dns_zone_cname_records }}"
   loop_control:
-    loop_var: "cloudflare_dns_zone_cname_record"
+    loop_var: cloudflare_dns_zone_cname_record
   async: "{{ ansible_check_mode | ternary(0, 60) }}"
   poll: 0
   changed_when: false
-  register: "cloudflare_dns_zone_cname_records_jobs"
+  register: cloudflare_dns_zone_cname_records_jobs
 
-- name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} cname records jobs results"
+- name: ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} cname records jobs results
   ansible.builtin.async_status:
     jid: "{{ cloudflare_dns_zone_cname_record_job.ansible_job_id }}"
-  register: "cloudflare_dns_zone_cname_record_job_result"
-  until: "cloudflare_dns_zone_cname_record_job_result.finished"
+  register: cloudflare_dns_zone_cname_record_job_result
+  until: cloudflare_dns_zone_cname_record_job_result.finished
   retries: 30
   loop: "{{ cloudflare_dns_zone_cname_records_jobs.results }}"
   loop_control:
     label: "{{ cloudflare_dns_zone_cname_record_job.cloudflare_dns_zone_cname_record.name }}"
-    loop_var: "cloudflare_dns_zone_cname_record_job"
+    loop_var: cloudflare_dns_zone_cname_record_job
 
-- name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} txt records"
+- name: ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} txt records
   community.general.cloudflare_dns:
     zone: "{{ cloudflare_dns_zone_name }}"
     record: "{{ cloudflare_dns_zone_txt_record.name }}"
-    type: "TXT"
+    type: TXT
     value: "{{ cloudflare_dns_zone_txt_record.value | default(omit) }}"
     ttl: "{{ cloudflare_dns_zone_txt_record.ttl | default(cloudflare_dns_default_record_ttl) }}"
     api_token: "{{ cloudflare_dns_zone_api_token | default(omit) }}"
@@ -105,19 +105,19 @@
     state: "{{ cloudflare_dns_zone_txt_record.state | default(cloudflare_dns_default_record_state) }}"
   loop: "{{ cloudflare_dns_zone_txt_records }}"
   loop_control:
-    loop_var: "cloudflare_dns_zone_txt_record"
+    loop_var: cloudflare_dns_zone_txt_record
   async: "{{ ansible_check_mode | ternary(0, 60) }}"
   poll: 0
   changed_when: false
-  register: "cloudflare_dns_zone_txt_records_jobs"
+  register: cloudflare_dns_zone_txt_records_jobs
 
-- name: "ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} txt records jobs results"
+- name: ensure cloudflare dns zone {{ cloudflare_dns_zone_name }} txt records jobs results
   ansible.builtin.async_status:
     jid: "{{ cloudflare_dns_zone_txt_record_job.ansible_job_id }}"
-  register: "cloudflare_dns_zone_txt_record_job_result"
-  until: "cloudflare_dns_zone_txt_record_job_result.finished"
+  register: cloudflare_dns_zone_txt_record_job_result
+  until: cloudflare_dns_zone_txt_record_job_result.finished
   retries: 30
   loop: "{{ cloudflare_dns_zone_txt_records_jobs.results }}"
   loop_control:
     label: "{{ cloudflare_dns_zone_txt_record_job.cloudflare_dns_zone_txt_record.name }}"
-    loop_var: "cloudflare_dns_zone_txt_record_job"
+    loop_var: cloudflare_dns_zone_txt_record_job

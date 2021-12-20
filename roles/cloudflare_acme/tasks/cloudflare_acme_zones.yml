@@ -1,6 +1,6 @@
 ---
-- name: "ensure cloudflare acme zones"
-  ansible.builtin.include_tasks: "cloudflare_acme_zone_domains.yml"
+- name: ensure cloudflare acme zones
+  ansible.builtin.include_tasks: cloudflare_acme_zone_domains.yml
   vars:
     cloudflare_acme_zone_name: "{{ cloudflare_acme_zone.name | mandatory }}"
     cloudflare_acme_zone_domains: "{{ cloudflare_acme_zone.domains | mandatory }}"
@@ -10,4 +10,4 @@
   loop: "{{ cloudflare_acme_zones }}"
   loop_control:
     label: "{{ cloudflare_acme_zone_name }}"
-    loop_var: "cloudflare_acme_zone"
+    loop_var: cloudflare_acme_zone

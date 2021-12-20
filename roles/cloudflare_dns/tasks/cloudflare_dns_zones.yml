@@ -1,6 +1,6 @@
 ---
-- name: "ensure cloudflare dns zones"
-  include_tasks: "cloudflare_dns_zone_records.yml"
+- name: ensure cloudflare dns zones
+  include_tasks: cloudflare_dns_zone_records.yml
   vars:
     cloudflare_dns_zone_name: "{{ cloudflare_dns_zone.name | mandatory }}"
     cloudflare_dns_zone_account_email: "{{ cloudflare_dns_zone.account_email | default(cloudflare_dns_account_email) }}"
@@ -13,4 +13,4 @@
   loop: "{{ cloudflare_dns_zones }}"
   loop_control:
     label: "{{ cloudflare_dns_zone_name }}"
-    loop_var: "cloudflare_dns_zone"
+    loop_var: cloudflare_dns_zone

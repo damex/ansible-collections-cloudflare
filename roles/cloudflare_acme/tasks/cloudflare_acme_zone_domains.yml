@@ -1,10 +1,10 @@
 ---
-- name: "ensure cloudflare acme zone domain certificates"
-  ansible.builtin.include_tasks: "cloudflare_acme_zone_domain_certificates.yml"
+- name: ensure cloudflare acme zone domain certificates
+  ansible.builtin.include_tasks: cloudflare_acme_zone_domain_certificates.yml
   vars:
     cloudflare_acme_domain_name: "{{ cloudflare_acme_zone_domain.name }}"
     cloudflare_acme_domain_names: "{{ cloudflare_acme_zone_domain.names | default([]) }}"
   loop: "{{ cloudflare_acme_zone_domains }}"
   loop_control:
     label: "{{ cloudflare_acme_domain_name }}"
-    loop_var: "cloudflare_acme_zone_domain"
+    loop_var: cloudflare_acme_zone_domain

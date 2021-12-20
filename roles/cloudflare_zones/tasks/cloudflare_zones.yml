@@ -1,6 +1,6 @@
 ---
-- name: "ensure cloudflare zones"
-  ansible.builtin.include_tasks: "cloudflare_zone.yml"
+- name: ensure cloudflare zones
+  ansible.builtin.include_tasks: cloudflare_zone.yml
   vars:
     cloudflare_zone_name: "{{ cloudflare_zone.name }}"
     cloudflare_zone_account_name: "{{ cloudflare_zone.account_name | default(cloudflare_zones_account_name) }}"
@@ -13,4 +13,4 @@
   loop: "{{ cloudflare_zones }}"
   loop_control:
     label: "{{ cloudflare_zone_name }}"
-    loop_var: "cloudflare_zone"
+    loop_var: cloudflare_zone
