@@ -15,6 +15,7 @@
   community.crypto.acme_certificate:
     account_email: "{{ cloudflare_acme_account_email | default(omit) }}"
     account_key: "{{ cloudflare_acme_account_key_file }}"
+    account_key_passphrase: "{{ cloudflare_acme_account_key_passphrase | default(omit) }}"
     challenge: dns-01
     csr: "{{ cloudflare_acme_domain_csr_file }}"
     dest: "{{ cloudflare_acme_domain_crt_file }}"
@@ -48,6 +49,7 @@
       community.crypto.acme_certificate:
         account_email: "{{ cloudflare_acme_account_email | default(omit) }}"
         account_key: "{{ cloudflare_acme_account_key_file }}"
+        account_key_passphrase: "{{ cloudflare_acme_account_key_passphrase | default(omit) }}"
         challenge: dns-01
         csr: "{{ cloudflare_acme_domain_csr_file }}"
         dest: "{{ cloudflare_acme_domain_crt_file }}"

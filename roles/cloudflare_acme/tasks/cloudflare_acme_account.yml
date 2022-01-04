@@ -3,3 +3,5 @@
   community.crypto.openssl_privatekey:
     path: "{{ cloudflare_acme_account_key_file }}"
     mode: "0640"
+    passphrase: "{{ cloudflare_acme_account_key_passphrase | default(omit) }}"
+    cipher: auto
