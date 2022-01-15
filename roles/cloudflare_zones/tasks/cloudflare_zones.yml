@@ -10,6 +10,7 @@
     cloudflare_zone_state: "{{ cloudflare_zone.state | default(cloudflare_zones_default_state) }}"
     cloudflare_zone_jump_start: "{{ cloudflare_zone.jump_start | default(cloudflare_zones_default_jump_start) }}"
     cloudflare_zone_type: "{{ cloudflare_zone.type | default(cloudflare_zones_default_type) }}"
+    cloudflare_zone_universal_ssl: "{{ cloudflare_zone.universal_ssl | default(cloudflare_zones_default_universal_ssl) }}"
   loop: "{{ cloudflare_zones }}"
   loop_control:
     label: "{{ cloudflare_zone_name }}"
