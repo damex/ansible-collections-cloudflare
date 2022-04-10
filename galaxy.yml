@@ -4,7 +4,7 @@ name: cloudflare
 version: 0.3.4
 readme: README.md
 authors:
-  - Roman Kuzmitskii <damex.pp@icloud.com>
+  - Roman Kuzmitskii <ansible@damex.org>
 license_file: LICENSE
 tags:
   - cloudflare
