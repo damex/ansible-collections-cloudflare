@@ -1,0 +1,25 @@
+---
+- name: get cloudflare accounts info
+  ansible.builtin.uri:
+    url: https://api.cloudflare.com/client/v4/accounts
+    method: GET
+    headers: "{{ cloudflare_zone_headers }}"
+    body_format: json
+  listen: ensure cloudflare facts
+  register: cloudflare_accounts_info
+
+- name: get cloudflare zones info
+  ansible.builtin.uri:
+    url: https://api.cloudflare.com/client/v4/zones
+    method: GET
+    headers: "{{ cloudflare_zone_headers }}"
+    body_format: json
+  # when: cloudflare_zone_headers is defined
+  listen: ensure cloudflare facts
+  register: cloudflare_zones_info
+
+- name: set cloudflare facts
+  ansible.builtin.set_fact:
+    cloudflare_account_ids: "{{ cloudflare_accounts_info.json.result | default([]) | items2dict(key_name='name', value_name='id') }}"
+    cloudflare_zone_ids: "{{ cloudflare_zones_info.json.result | default ([]) | items2dict(key_name='name', value_name='id') }}"
+  listen: ensure cloudflare facts

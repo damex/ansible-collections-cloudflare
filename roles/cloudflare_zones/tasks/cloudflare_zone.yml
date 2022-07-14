@@ -26,26 +26,11 @@
       Authorization: Bearer {{ cloudflare_zone_api_token }}
   when: cloudflare_zone_api_token | length
 
-- name: get cloudflare accounts info
-  ansible.builtin.uri:
-    url: https://api.cloudflare.com/client/v4/accounts
-    method: GET
-    headers: "{{ cloudflare_zone_headers }}"
-    body_format: json
-  register: cloudflare_accounts_info
+- name: ensure cloudflare facts handler
+  command: /bin/true
+  notify: ensure cloudflare facts
 
-- name: get cloudflare zones info
-  ansible.builtin.uri:
-    url: https://api.cloudflare.com/client/v4/zones
-    method: GET
-    headers: "{{ cloudflare_zone_headers }}"
-    body_format: json
-  register: cloudflare_zones_info
-
-- name: set cloudflare facts
-  ansible.builtin.set_fact:
-    cloudflare_account_ids: "{{ cloudflare_accounts_info.json.result | default([]) | items2dict(key_name='name', value_name='id') }}"
-    cloudflare_zone_ids: "{{ cloudflare_zones_info.json.result | default ([]) | items2dict(key_name='name', value_name='id') }}"
+- meta: flush_handlers
 
 - name: create cloudflare zone {{ cloudflare_zone_name }}
   ansible.builtin.uri:
@@ -62,3 +47,26 @@
   when:
     - cloudflare_account_ids[cloudflare_zone_account_name] is defined
     - cloudflare_zone_ids[cloudflare_zone_name] is not defined
+  notify: ensure cloudflare facts
+
+- meta: flush_handlers
+
+- name: get cloudflare zone {{ cloudflare_zone_name }} universal ssl info
+  ansible.builtin.uri:
+    url: https://api.cloudflare.com/client/v4/zones/{{ cloudflare_zone_ids[cloudflare_zone_name] }}/ssl/universal/settings
+    method: GET
+    headers: "{{ cloudflare_zone_headers }}"
+    body_format: json
+  register: cloudflare_zone_universal_ssl_info
+
+- name: ensure cloudflare zone {{ cloudflare_zone_name }} universal ssl
+  ansible.builtin.uri:
+    url: https://api.cloudflare.com/client/v4/zones/{{ cloudflare_zone_ids[cloudflare_zone_name] }}/ssl/universal/settings
+    method: PATCH
+    headers: "{{ cloudflare_zone_headers }}"
+    body_format: json
+    body:
+      enabled: "{{ cloudflare_zone_universal_ssl }}"
+  changed_when: true
+  when:
+    - cloudflare_zone_universal_ssl_info.json.result.enabled != cloudflare_zone_universal_ssl
