@@ -3,6 +3,7 @@
   community.crypto.openssl_privatekey:
     path: "{{ cloudflare_acme_domain_key_file }}"
     mode: "0640"
+  become: true
 
 - name: Ensure cloudflare acme csr
   community.crypto.openssl_csr:
@@ -10,6 +11,7 @@
     privatekey_path: "{{ cloudflare_acme_domain_key_file }}"
     common_name: "{{ cloudflare_acme_domain_name }}"
     subject_alt_name: "{{ cloudflare_acme_domain_names | map('regex_replace', '^', 'DNS:') }}"
+  become: true
 
 - name: Ensure cloudflare acme challenge
   community.crypto.acme_certificate:
@@ -27,6 +29,7 @@
   until: not cloudflare_acme_certificate_challenge.failed
   retries: "{{ cloudflare_acme_challenge_retries }}"
   register: cloudflare_acme_certificate_challenge
+  become: true
 
 - name: Ensure cloudflare acme dns challenge
   when:
@@ -65,6 +68,7 @@
         - "'pending' not in cloudflare_acme_domain_names + [cloudflare_acme_domain_name] | map('extract', cloudflare_acme_certificate_validate_challenge.authorizations) | map(attribute='challenges') | flatten | map(attribute='status')"
       retries: "{{ cloudflare_acme_challenge_retries }}"
       register: cloudflare_acme_certificate_validate_challenge
+      become: true
   always:
     - name: Ensure cloudflare dns challenge record is absent
       ansible.builtin.include_role:
