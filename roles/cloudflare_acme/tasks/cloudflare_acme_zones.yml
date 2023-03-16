@@ -1,5 +1,5 @@
 ---
-- name: ensure cloudflare acme zones
+- name: Ensure cloudflare acme zones
   ansible.builtin.include_tasks: cloudflare_acme_zone_domains.yml
   vars:
     cloudflare_acme_zone_name: "{{ cloudflare_acme_zone.name | mandatory }}"

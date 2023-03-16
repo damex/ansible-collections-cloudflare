@@ -1,8 +1,8 @@
 ---
-- name: ensure cloudflare zones
+- name: Ensure cloudflare zones
   tags:
     - cloudflare
     - cloudflare_zones
   block:
-    - name: ensure cloudflare zones
+    - name: Ensure cloudflare zones
       ansible.builtin.import_tasks: cloudflare_zones.yml

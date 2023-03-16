@@ -1,17 +1,17 @@
 ---
-- name: ensure cloudflare credentials
+- name: Ensure cloudflare credentials
   ansible.builtin.fail:
     msg: Please make sure that cloudflare_zone account_email and account_api_key or api_token is defined!
   when: (cloudflare_zone_account_email | length and not cloudflare_zone_account_api_key and cloudflare_zone_api_token | length) or
         (not cloudflare_zone_account_email and cloudflare_zone_account_api_key | length and cloudflare_zone_api_token | length) or
         (cloudflare_zone_account_email | length and cloudflare_zone_account_api_key | length and cloudflare_zone_api_token | length)
 
-- name: ensure cloudflare credentials
+- name: Ensure cloudflare credentials
   ansible.builtin.fail:
     msg: Please make sure that cloudflare_zone account_name is defiend!
   when: not cloudflare_zone_account_name
 
-- name: set cloudflare X-Auth-Email and X-Auth-Key headers
+- name: Set cloudflare X-Auth-Email and X-Auth-Key headers
   ansible.builtin.set_fact:
     cloudflare_zone_headers:
       X-Auth-Email: "{{ cloudflare_zone_account_email }}"
@@ -20,13 +20,13 @@
     - cloudflare_zone_account_email | length
     - cloudflare_zone_account_api_key | length
 
-- name: set cloudflare Authorization headers
+- name: Set cloudflare Authorization headers
   ansible.builtin.set_fact:
     cloudflare_zone_headers:
       Authorization: Bearer {{ cloudflare_zone_api_token }}
   when: cloudflare_zone_api_token | length
 
-- name: get cloudflare accounts info
+- name: Get cloudflare accounts info
   ansible.builtin.uri:
     url: https://api.cloudflare.com/client/v4/accounts
     method: GET
@@ -34,7 +34,7 @@
     body_format: json
   register: cloudflare_accounts_info
 
-- name: get cloudflare zones info
+- name: Get cloudflare zones info
   ansible.builtin.uri:
     url: https://api.cloudflare.com/client/v4/zones
     method: GET
@@ -42,12 +42,12 @@
     body_format: json
   register: cloudflare_zones_info
 
-- name: set cloudflare facts
+- name: Set cloudflare facts
   ansible.builtin.set_fact:
     cloudflare_account_ids: "{{ cloudflare_accounts_info.json.result | default([]) | items2dict(key_name='name', value_name='id') }}"
     cloudflare_zone_ids: "{{ cloudflare_zones_info.json.result | default([]) | items2dict(key_name='name', value_name='id') }}"
 
-- name: create cloudflare zone {{ cloudflare_zone_name }}
+- name: Create cloudflare zone {{ cloudflare_zone_name }}
   ansible.builtin.uri:
     url: https://api.cloudflare.com/client/v4/zones
     method: POST

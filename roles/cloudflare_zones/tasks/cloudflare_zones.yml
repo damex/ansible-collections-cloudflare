@@ -1,5 +1,5 @@
 ---
-- name: ensure cloudflare zones
+- name: Ensure cloudflare zones
   ansible.builtin.include_tasks: cloudflare_zone.yml
   vars:
     cloudflare_zone_name: "{{ cloudflare_zone.name }}"

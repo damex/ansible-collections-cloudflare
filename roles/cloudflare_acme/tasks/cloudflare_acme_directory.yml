@@ -1,5 +1,5 @@
 ---
-- name: ensure cloudflare acme certificate directory
+- name: Ensure cloudflare acme certificate directory
   ansible.builtin.file:
     path: "{{ cloudflare_acme_certificate_directory }}"
     mode: "0700"

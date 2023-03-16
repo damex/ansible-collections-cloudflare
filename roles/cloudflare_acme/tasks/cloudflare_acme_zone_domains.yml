@@ -1,5 +1,5 @@
 ---
-- name: ensure cloudflare acme zone domain certificates
+- name: Ensure cloudflare acme zone domain certificates
   ansible.builtin.include_tasks: cloudflare_acme_zone_domain_certificates.yml
   vars:
     cloudflare_acme_domain_name: "{{ cloudflare_acme_zone_domain.name }}"

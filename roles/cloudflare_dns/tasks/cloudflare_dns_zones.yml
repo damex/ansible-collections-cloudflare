@@ -1,5 +1,5 @@
 ---
-- name: ensure cloudflare dns zones
+- name: Ensure cloudflare dns zones
   ansible.builtin.include_tasks: cloudflare_dns_zone_records.yml
   vars:
     cloudflare_dns_zone_name: "{{ cloudflare_dns_zone.name | mandatory }}"
