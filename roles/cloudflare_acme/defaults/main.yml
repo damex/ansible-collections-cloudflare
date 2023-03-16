@@ -9,7 +9,6 @@ cloudflare_acme_cloudflare_api_token: ""
 cloudflare_acme_zones: []
 cloudflare_acme_challenge_retries: 30
 cloudflare_acme_certificate_remaining_days: 30
-cloudflare_acme_certificate_directory: ""
 cloudflare_acme_account_key_file: "{{ cloudflare_acme_certificate_directory }}/account.key"
 cloudflare_acme_account_key_passphrase: ""
 cloudflare_acme_domain_key_file: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.key"
