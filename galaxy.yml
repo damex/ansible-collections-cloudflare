@@ -5,6 +5,7 @@ version: 0.3.7
 readme: README.md
 authors:
   - Roman Kuzmitskii <ansible@damex.org>
+description: cloudflare collection
 license_file: LICENSE
 tags:
   - cloudflare
