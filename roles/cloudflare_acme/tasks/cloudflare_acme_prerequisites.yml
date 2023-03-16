@@ -1,5 +1,0 @@
----
-- name: Ensure cloudflare acme directory is defined
-  ansible.builtin.fail:
-    msg: Please make sure that cloudflare_acme_certificate_directory is defined!
-  when: not cloudflare_acme_certificate_directory

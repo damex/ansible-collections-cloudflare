@@ -2,6 +2,9 @@
 argument_specs:
   main:
     options:
+      cloudflare_acme_certificate_directory:
+        type: str
+        required: true
       cloudflare_dns_zones:
         type: list
         required: true
