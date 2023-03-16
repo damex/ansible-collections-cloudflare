@@ -29,6 +29,8 @@
   register: cloudflare_acme_certificate_challenge
 
 - name: ensure cloudflare acme dns challenge
+  when:
+    - cloudflare_acme_certificate_challenge.changed
   block:
     - name: ensure cloudflare dns challenge record
       ansible.builtin.include_role:
@@ -78,5 +80,3 @@
                 state: absent
       loop: "{{ cloudflare_acme_domain_names + [cloudflare_acme_domain_name] }}"
       when: cloudflare_acme_certificate_challenge.authorizations[item].status == "pending"
-  when:
-    - cloudflare_acme_certificate_challenge.changed
