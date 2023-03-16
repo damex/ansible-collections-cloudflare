@@ -8,6 +8,7 @@ authors:
 license_file: LICENSE
 tags:
   - cloudflare
+  - infrastructure
 repository: https://github.com/damex/ansible-collections-cloudflare
 issues: https://github.com/damex/ansible-collections-cloudflare/issues
 dependencies:
