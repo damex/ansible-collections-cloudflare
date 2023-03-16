@@ -2,7 +2,7 @@
 - name: Ensure cloudflare dns zones
   ansible.builtin.include_tasks: cloudflare_dns_zone_records.yml
   vars:
-    cloudflare_dns_zone_name: "{{ cloudflare_dns_zone.name | mandatory }}"
+    cloudflare_dns_zone_name: "{{ cloudflare_dns_zone.name }}"
     cloudflare_dns_zone_account_email: "{{ cloudflare_dns_zone.account_email | default(cloudflare_dns_account_email) }}"
     cloudflare_dns_zone_account_api_key: "{{ cloudflare_dns_zone.account_api_key | default(cloudflare_dns_account_api_key) }}"
     cloudflare_dns_zone_api_token: "{{ cloudflare_dns_zone.api_token | default(cloudflare_dns_api_token) }}"
