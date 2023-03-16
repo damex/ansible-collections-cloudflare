@@ -45,7 +45,7 @@
 - name: set cloudflare facts
   ansible.builtin.set_fact:
     cloudflare_account_ids: "{{ cloudflare_accounts_info.json.result | default([]) | items2dict(key_name='name', value_name='id') }}"
-    cloudflare_zone_ids: "{{ cloudflare_zones_info.json.result | default ([]) | items2dict(key_name='name', value_name='id') }}"
+    cloudflare_zone_ids: "{{ cloudflare_zones_info.json.result | default([]) | items2dict(key_name='name', value_name='id') }}"
 
 - name: create cloudflare zone {{ cloudflare_zone_name }}
   ansible.builtin.uri:
