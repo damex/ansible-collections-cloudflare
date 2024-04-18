@@ -9,16 +9,21 @@ jobs:
     name: ansible-lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: ansible/ansible-lint-action@main
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          targets: ""
-          args: ""
+          python-version: "3.11"
+      - run: pip install --user pipenv
+      - run: make pipenv
+      - run: pipenv run ansible-lint
   yamllint:
     name: yamllint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - run: pip install yamllint
-      - run: yamllint -s .
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - run: pip install --user pipenv
+      - run: make pipenv
+      - run: pipenv run yamllint -s .
