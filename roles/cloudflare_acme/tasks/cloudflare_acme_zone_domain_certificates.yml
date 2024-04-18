@@ -33,7 +33,7 @@
 
 - name: Ensure cloudflare acme dns challenge
   when:
-    - cloudflare_acme_certificate_challenge.changed
+    - cloudflare_acme_certificate_challenge.changed # noqa: no-handler
   block:
     - name: Ensure cloudflare dns challenge record
       ansible.builtin.include_role:
