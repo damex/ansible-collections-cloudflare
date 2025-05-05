@@ -2,10 +2,40 @@
 argument_specs:
   main:
     options:
+      cloudflare_acme_terms_agreed:
+        type: bool
+      cloudflare_acme_api_version:
+        type: int
+      cloudflare_acme_directory_url:
+        type: str
+      cloudflare_acme_account_email:
+        type: str
+      cloudflare_acme_cloudflare_account_email:
+        type: str
+      cloudflare_acme_cloudflare_account_api_key:
+        type: str
+      cloudflare_acme_cloudflare_api_token:
+        type: str
+      cloudflare_acme_challenge_retries:
+        type: int
+      cloudflare_acme_certificate_remaining_days:
+        type: int
+      cloudflare_acme_account_key_file:
+        type: str
+      cloudflare_acme_account_key_passphrase:
+        type: str
+      cloudflare_acme_domain_key_file:
+        type: str
+      cloudflare_acme_domain_csr_file:
+        type: str
+      cloudflare_acme_domain_crt_file:
+        type: str
+      cloudflare_acme_domain_chain_file:
+        type: str
       cloudflare_acme_certificate_directory:
         type: str
         required: true
-      cloudflare_dns_zones:
+      cloudflare_acme_zones:
         type: list
         required: true
         elements: dict
@@ -13,7 +43,19 @@ argument_specs:
           name:
             required: true
             type: str
+          cloudflare_account_email:
+            type: str
+          cloudflare_account_api_key:
+            type: str
+          cloudflare_api_token:
+            type: str
           domains:
             type: list
             required: true
             elements: dict
+            options:
+              name:
+                required: true
+                type: str
+              names:
+                type: list
