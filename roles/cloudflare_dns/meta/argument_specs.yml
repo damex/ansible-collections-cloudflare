@@ -2,6 +2,21 @@
 argument_specs:
   main:
     options:
+      cloudflare_dns_account_email:
+        type: str
+      cloudflare_dns_account_api_key:
+        type: str
+      cloudflare_dns_api_token:
+        type: str
+      cloudflare_dns_default_record_proxied:
+        type: bool
+      cloudflare_dns_default_record_state:
+        type: str
+        choices:
+          - absent
+          - present
+      cloudflare_dns_default_record_ttl:
+        type: int
       cloudflare_dns_zones:
         type: list
         required: true
@@ -10,3 +25,75 @@ argument_specs:
           name:
             required: true
             type: str
+          account_email:
+            type: str
+          account_api_key:
+            type: str
+          api_token:
+            type: str
+          mx_records:
+            type: list
+            options:
+              name:
+                required: true
+                type: str
+              priority:
+                type: int
+              value:
+                type: str
+              ttl:
+                type: int
+              state:
+                type: str
+                choices:
+                  - absent
+                  - present
+          a_records:
+            type: list
+            options:
+              name:
+                required: true
+                type: str
+              value:
+                type: str
+              ttl:
+                type: int
+              proxied:
+                type: bool
+              state:
+                type: str
+                choices:
+                  - absent
+                  - present
+          cname_records:
+            type: list
+            options:
+              name:
+                required: true
+                type: str
+              value:
+                type: str
+              ttl:
+                type: int
+              proxied:
+                type: bool
+              state:
+                type: str
+                choices:
+                  - absent
+                  - present
+          txt_records:
+            type: list
+            options:
+              name:
+                required: true
+                type: str
+              value:
+                type: str
+              ttl:
+                type: int
+              state:
+                type: str
+                choices:
+                  - absent
+                  - present
