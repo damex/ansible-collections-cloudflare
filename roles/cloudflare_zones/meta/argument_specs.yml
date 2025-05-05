@@ -2,6 +2,23 @@
 argument_specs:
   main:
     options:
+      cloudflare_zones_account_name:
+        type: str
+      cloudflare_zones_account_email:
+        type: str
+      cloudflare_zones_account_api_key:
+        type: str
+      cloudflare_zones_api_token:
+        type: str
+      cloudflare_zones_default_state:
+        type: str
+        choices:
+          - absent
+          - present
+      cloudflare_zones_default_jump_start:
+        type: bool
+      cloudflare_zones_default_type:
+        type: str
       cloudflare_zones:
         type: list
         required: true
@@ -9,4 +26,19 @@ argument_specs:
         options:
           name:
             required: true
+            type: str
+          account_name:
+            type: str
+          account_email:
+            type: str
+          account_api_key:
+            type: str
+          state:
+            type: str
+            choices:
+              - absent
+              - present
+          jump_start:
+            type: bool
+          type:
             type: str
