@@ -25,6 +25,7 @@
   register: cloudflare_dns_zone_mx_record_job_result
   until: cloudflare_dns_zone_mx_record_job_result.finished
   retries: 30
+  when: cloudflare_dns_zone_mx_record_job.ansible_job_id is defined
   loop: "{{ cloudflare_dns_zone_mx_records_jobs.results }}"
   loop_control:
     label: "{{ cloudflare_dns_zone_mx_record_job.cloudflare_dns_zone_mx_record.name }}"
@@ -56,6 +57,7 @@
   register: cloudflare_dns_zone_a_record_job_result
   until: cloudflare_dns_zone_a_record_job_result.finished
   retries: 30
+  when: cloudflare_dns_zone_a_record_job.ansible_job_id is defined
   loop: "{{ cloudflare_dns_zone_a_records_jobs.results }}"
   loop_control:
     label: "{{ cloudflare_dns_zone_a_record_job.cloudflare_dns_zone_a_record.name }}"
@@ -87,6 +89,7 @@
   register: cloudflare_dns_zone_cname_record_job_result
   until: cloudflare_dns_zone_cname_record_job_result.finished
   retries: 30
+  when: cloudflare_dns_zone_cname_record_job.ansible_job_id is defined
   loop: "{{ cloudflare_dns_zone_cname_records_jobs.results }}"
   loop_control:
     label: "{{ cloudflare_dns_zone_cname_record_job.cloudflare_dns_zone_cname_record.name }}"
@@ -117,6 +120,7 @@
   register: cloudflare_dns_zone_txt_record_job_result
   until: cloudflare_dns_zone_txt_record_job_result.finished
   retries: 30
+  when: cloudflare_dns_zone_txt_record_job.ansible_job_id is defined
   loop: "{{ cloudflare_dns_zone_txt_records_jobs.results }}"
   loop_control:
     label: "{{ cloudflare_dns_zone_txt_record_job.cloudflare_dns_zone_txt_record.name }}"
