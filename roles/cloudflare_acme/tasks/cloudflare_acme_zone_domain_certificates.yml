@@ -21,7 +21,7 @@
     challenge: dns-01
     csr: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.csr"
     dest: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.crt"
-    fullchain_dest: "{{ {{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.chain.crt"
+    fullchain_dest: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.chain.crt"
     remaining_days: "{{ cloudflare_acme_certificate_remaining_days }}"
     terms_agreed: "{{ cloudflare_acme_terms_agreed }}"
     acme_version: "{{ cloudflare_acme_api_version }}"
@@ -34,6 +34,7 @@
 - name: Ensure cloudflare acme dns challenge
   when:
     - cloudflare_acme_certificate_challenge.changed # noqa: no-handler
+    - not ansible_check_mode
   block:
     - name: Ensure cloudflare dns challenge record
       ansible.builtin.include_role:
