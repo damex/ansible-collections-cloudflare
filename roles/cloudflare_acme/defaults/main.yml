@@ -2,11 +2,6 @@
 cloudflare_acme_terms_agreed: true
 cloudflare_acme_api_version: 2
 cloudflare_acme_directory_url: https://acme-staging-v02.api.letsencrypt.org/directory
-cloudflare_acme_account_email: ""
-cloudflare_acme_cloudflare_account_email: ""
-cloudflare_acme_cloudflare_account_api_key: ""
-cloudflare_acme_cloudflare_api_token: ""
-cloudflare_acme_zones: []
 cloudflare_acme_challenge_retries: 30
 cloudflare_acme_certificate_remaining_days: 30
 cloudflare_acme_account_key_file: "{{ cloudflare_acme_certificate_directory }}/account.key"
