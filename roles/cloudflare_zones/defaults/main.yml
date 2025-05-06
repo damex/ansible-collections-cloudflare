@@ -1,9 +1,4 @@
 ---
-cloudflare_zones_account_name: ""
-cloudflare_zones_account_email: ""
-cloudflare_zones_account_api_key: ""
-cloudflare_zones_api_token: ""
-cloudflare_zones: [] # noqa: var-naming[no-role-prefix]
 cloudflare_zones_default_state: present
 cloudflare_zones_default_jump_start: false
 cloudflare_zones_default_type: full
