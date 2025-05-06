@@ -24,14 +24,6 @@ argument_specs:
         type: str
       cloudflare_acme_account_key_passphrase:
         type: str
-      cloudflare_acme_domain_key_file:
-        type: str
-      cloudflare_acme_domain_csr_file:
-        type: str
-      cloudflare_acme_domain_crt_file:
-        type: str
-      cloudflare_acme_domain_chain_file:
-        type: str
       cloudflare_acme_certificate_directory:
         type: str
         required: true

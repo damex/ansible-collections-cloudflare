@@ -1,14 +1,14 @@
 ---
 - name: Ensure cloudflare acme domain key
   community.crypto.openssl_privatekey:
-    path: "{{ cloudflare_acme_domain_key_file }}"
+    path: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.key"
     mode: "0640"
   become: true
 
 - name: Ensure cloudflare acme csr
   community.crypto.openssl_csr:
-    path: "{{ cloudflare_acme_domain_csr_file }}"
-    privatekey_path: "{{ cloudflare_acme_domain_key_file }}"
+    path: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.csr"
+    privatekey_path: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.key"
     common_name: "{{ cloudflare_acme_domain_name }}"
     subject_alt_name: "{{ cloudflare_acme_domain_names | map('regex_replace', '^', 'DNS:') }}"
   become: true
@@ -19,9 +19,9 @@
     account_key: "{{ cloudflare_acme_account_key_file }}"
     account_key_passphrase: "{{ cloudflare_acme_account_key_passphrase | default(omit) }}"
     challenge: dns-01
-    csr: "{{ cloudflare_acme_domain_csr_file }}"
-    dest: "{{ cloudflare_acme_domain_crt_file }}"
-    fullchain_dest: "{{ cloudflare_acme_domain_chain_file }}"
+    csr: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.csr"
+    dest: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.crt"
+    fullchain_dest: "{{ {{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.chain.crt"
     remaining_days: "{{ cloudflare_acme_certificate_remaining_days }}"
     terms_agreed: "{{ cloudflare_acme_terms_agreed }}"
     acme_version: "{{ cloudflare_acme_api_version }}"
@@ -56,9 +56,9 @@
         account_key: "{{ cloudflare_acme_account_key_file }}"
         account_key_passphrase: "{{ cloudflare_acme_account_key_passphrase | default(omit) }}"
         challenge: dns-01
-        csr: "{{ cloudflare_acme_domain_csr_file }}"
-        dest: "{{ cloudflare_acme_domain_crt_file }}"
-        fullchain_dest: "{{ cloudflare_acme_domain_chain_file }}"
+        csr: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.csr"
+        dest: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.crt"
+        fullchain_dest: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.chain.crt"
         data: "{{ cloudflare_acme_certificate_challenge }}"
         remaining_days: "{{ cloudflare_acme_certificate_remaining_days }}"
         terms_agreed: "{{ cloudflare_acme_terms_agreed }}"

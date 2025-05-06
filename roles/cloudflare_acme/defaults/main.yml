@@ -11,7 +11,3 @@ cloudflare_acme_challenge_retries: 30
 cloudflare_acme_certificate_remaining_days: 30
 cloudflare_acme_account_key_file: "{{ cloudflare_acme_certificate_directory }}/account.key"
 cloudflare_acme_account_key_passphrase: ""
-cloudflare_acme_domain_key_file: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.key"
-cloudflare_acme_domain_csr_file: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.csr"
-cloudflare_acme_domain_crt_file: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.crt"
-cloudflare_acme_domain_chain_file: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.chain.crt"
