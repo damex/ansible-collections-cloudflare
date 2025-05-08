@@ -3,6 +3,7 @@ argument_specs:
   main:
     options:
       cloudflare_zones_account_name:
+        required: true
         type: str
       cloudflare_zones_account_email:
         type: str
