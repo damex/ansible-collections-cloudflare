@@ -1,16 +1,4 @@
 ---
-- name: Ensure cloudflare credentials
-  ansible.builtin.fail:
-    msg: Please make sure that cloudflare_zone account_email and account_api_key or api_token is defined!
-  when: (cloudflare_zone_account_email | length and not cloudflare_zone_account_api_key and cloudflare_zone_api_token | length) or
-        (not cloudflare_zone_account_email and cloudflare_zone_account_api_key | length and cloudflare_zone_api_token | length) or
-        (cloudflare_zone_account_email | length and cloudflare_zone_account_api_key | length and cloudflare_zone_api_token | length)
-
-- name: Ensure cloudflare credentials
-  ansible.builtin.fail:
-    msg: Please make sure that cloudflare_zone account_name is defiend!
-  when: not cloudflare_zone_account_name
-
 - name: Set cloudflare X-Auth-Email and X-Auth-Key headers
   ansible.builtin.set_fact:
     cloudflare_zone_headers:
@@ -32,6 +20,7 @@
     method: GET
     headers: "{{ cloudflare_zone_headers }}"
     body_format: json
+  when: cloudflare_zone_headers | length
   register: cloudflare_accounts_info
 
 - name: Get cloudflare zones info
@@ -40,6 +29,7 @@
     method: GET
     headers: "{{ cloudflare_zone_headers }}"
     body_format: json
+  when: cloudflare_zone_headers | length
   register: cloudflare_zones_info
 
 - name: Set cloudflare facts
