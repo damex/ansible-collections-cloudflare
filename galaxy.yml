@@ -1,7 +1,7 @@
 ---
 namespace: damex
 name: cloudflare
-version: 1.0.4
+version: 1.0.5
 readme: README.md
 authors:
   - Roman Kuzmitskii <ansible@damex.org>
@@ -13,5 +13,5 @@ tags:
 repository: https://github.com/damex/ansible-collections-cloudflare
 issues: https://github.com/damex/ansible-collections-cloudflare/issues
 dependencies:
-  community.general: "*"
+  community.general: ">=10.3.1"
   community.crypto: "*"
