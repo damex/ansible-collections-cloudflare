@@ -34,6 +34,8 @@ argument_specs:
             type: str
           account_api_key:
             type: str
+          api_token:
+            type: str
           state:
             type: str
             choices:
