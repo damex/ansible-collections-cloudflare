@@ -27,6 +27,8 @@ argument_specs:
       cloudflare_acme_certificate_directory:
         type: str
         required: true
+      cloudflare_acme_user:
+        type: str
       cloudflare_acme_zones:
         type: list
         required: true
