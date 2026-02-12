@@ -14,8 +14,10 @@ argument_specs:
         type: str
       cloudflare_acme_cloudflare_account_api_key:
         type: str
+        no_log: true
       cloudflare_acme_cloudflare_api_token:
         type: str
+        no_log: true
       cloudflare_acme_challenge_retries:
         type: int
       cloudflare_acme_certificate_remaining_days:
@@ -24,6 +26,7 @@ argument_specs:
         type: str
       cloudflare_acme_account_key_passphrase:
         type: str
+        no_log: true
       cloudflare_acme_certificate_directory:
         type: str
         required: true
@@ -41,8 +44,10 @@ argument_specs:
             type: str
           cloudflare_account_api_key:
             type: str
+            no_log: true
           cloudflare_api_token:
             type: str
+            no_log: true
           domains:
             type: list
             required: true

@@ -9,8 +9,10 @@ argument_specs:
         type: str
       cloudflare_zones_account_api_key:
         type: str
+        no_log: true
       cloudflare_zones_api_token:
         type: str
+        no_log: true
       cloudflare_zones_default_state:
         type: str
         choices:
@@ -34,8 +36,10 @@ argument_specs:
             type: str
           account_api_key:
             type: str
+            no_log: true
           api_token:
             type: str
+            no_log: true
           state:
             type: str
             choices:
