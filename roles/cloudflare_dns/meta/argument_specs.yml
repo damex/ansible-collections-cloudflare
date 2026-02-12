@@ -6,8 +6,10 @@ argument_specs:
         type: str
       cloudflare_dns_account_api_key:
         type: str
+        no_log: true
       cloudflare_dns_api_token:
         type: str
+        no_log: true
       cloudflare_dns_default_record_proxied:
         type: bool
       cloudflare_dns_default_record_state:
@@ -29,8 +31,10 @@ argument_specs:
             type: str
           account_api_key:
             type: str
+            no_log: true
           api_token:
             type: str
+            no_log: true
           mx_records:
             type: list
             options:
