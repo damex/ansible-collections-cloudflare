@@ -19,7 +19,7 @@
   changed_when: false
   register: cloudflare_dns_zone_mx_records_jobs
 
-- name: Ensure mx records jobs results fpr cloudflare dns zone {{ cloudflare_dns_zone_name }}
+- name: Ensure mx records jobs results for cloudflare dns zone {{ cloudflare_dns_zone_name }}
   ansible.builtin.async_status:
     jid: "{{ cloudflare_dns_zone_mx_record_job.ansible_job_id }}"
   register: cloudflare_dns_zone_mx_record_job_result
