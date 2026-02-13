@@ -68,6 +68,7 @@
         terms_agreed: "{{ cloudflare_acme_terms_agreed }}"
         acme_version: "{{ cloudflare_acme_api_version }}"
         acme_directory: "{{ cloudflare_acme_directory_url }}"
+        deactivate_authzs: "{{ cloudflare_acme_domain_deactivate_authzs }}"
       until:
         - "'pending' not in cloudflare_acme_domain_names + [cloudflare_acme_domain_name] | map('extract', cloudflare_acme_certificate_validate_challenge.authorizations) | map(attribute='challenges') | flatten | map(attribute='status')"
       retries: "{{ cloudflare_acme_challenge_retries }}"
