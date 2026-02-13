@@ -22,6 +22,8 @@ argument_specs:
         type: int
       cloudflare_acme_certificate_remaining_days:
         type: int
+      cloudflare_acme_deactivate_authzs:
+        type: bool
       cloudflare_acme_account_key_file:
         type: path
       cloudflare_acme_account_key_passphrase:
@@ -58,3 +60,5 @@ argument_specs:
                 type: str
               names:
                 type: list
+              deactivate_authzs:
+                type: bool
