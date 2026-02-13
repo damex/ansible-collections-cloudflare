@@ -37,6 +37,7 @@ argument_specs:
             no_log: true
           mx_records:
             type: list
+            elements: dict
             options:
               name:
                 required: true
@@ -54,6 +55,7 @@ argument_specs:
                   - present
           a_records:
             type: list
+            elements: dict
             options:
               name:
                 required: true
@@ -71,6 +73,7 @@ argument_specs:
                   - present
           cname_records:
             type: list
+            elements: dict
             options:
               name:
                 required: true
@@ -88,6 +91,7 @@ argument_specs:
                   - present
           txt_records:
             type: list
+            elements: dict
             options:
               name:
                 required: true
