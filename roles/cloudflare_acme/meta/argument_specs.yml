@@ -23,7 +23,7 @@ argument_specs:
       cloudflare_acme_certificate_remaining_days:
         type: int
       cloudflare_acme_account_key_file:
-        type: str
+        type: path
       cloudflare_acme_account_key_passphrase:
         type: str
         no_log: true
