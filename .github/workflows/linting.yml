@@ -3,7 +3,7 @@ name: linting
 on: # yamllint disable-line rule:truthy
   push:
     branches:
-      - main
+      - production
   pull_request:
 
 jobs:
