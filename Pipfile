@@ -9,6 +9,7 @@ verify_ssl = true
 ansible-core = "==2.20.2"
 ansible-lint = "==26.1.1"
 yamllint = "==1.38.0"
+pylint = {extras = ["spelling"], version = "==4.0.4"}
 
 [requires]
 python_version = "3.14"
