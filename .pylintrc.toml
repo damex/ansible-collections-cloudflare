@@ -1,0 +1,2 @@
+[tool.pylint.variables]
+allow-global-unused-variables = false
