@@ -1,8 +1,10 @@
 ---
 name: linting
 on: # yamllint disable-line rule:truthy
-  - push
-  - pull_request
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   ansible-lint:
