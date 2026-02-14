@@ -5,6 +5,10 @@ on: # yamllint disable-line rule:truthy
     branches:
       - production
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   ansible-lint:
