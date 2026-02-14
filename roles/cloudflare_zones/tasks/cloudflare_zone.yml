@@ -1,54 +1,11 @@
 ---
-- name: Set cloudflare X-Auth-Email and X-Auth-Key headers
-  ansible.builtin.set_fact:
-    cloudflare_zones_zone_headers:
-      X-Auth-Email: "{{ cloudflare_zone_account_email }}"
-      X-Auth-Key: "{{ cloudflare_zone_account_api_key }}"
-  when:
-    - cloudflare_zone_account_email | length > 0
-    - cloudflare_zone_account_api_key | length > 0
-
-- name: Set cloudflare Authorization headers
-  ansible.builtin.set_fact:
-    cloudflare_zones_zone_headers:
-      Authorization: Bearer {{ cloudflare_zone_api_token }}
-  when: cloudflare_zone_api_token | length > 0
-
-- name: Get cloudflare accounts info
-  ansible.builtin.uri:
-    url: https://api.cloudflare.com/client/v4/accounts
-    method: GET
-    headers: "{{ cloudflare_zones_zone_headers }}"
-    body_format: json
-  when: cloudflare_zones_zone_headers | length > 0
-  register: cloudflare_zones_accounts_info
-
-- name: Get cloudflare zones info
-  ansible.builtin.uri:
-    url: https://api.cloudflare.com/client/v4/zones
-    method: GET
-    headers: "{{ cloudflare_zones_zone_headers }}"
-    body_format: json
-  when: cloudflare_zones_zone_headers | length > 0
-  register: cloudflare_zones_info
-
-- name: Set cloudflare facts
-  ansible.builtin.set_fact:
-    cloudflare_zones_account_ids: "{{ cloudflare_zones_accounts_info.json.result | default([]) | items2dict(key_name='name', value_name='id') }}"
-    cloudflare_zones_zone_ids: "{{ cloudflare_zones_info.json.result | default([]) | items2dict(key_name='name', value_name='id') }}"
-
-- name: Create cloudflare zone {{ cloudflare_zone_name }}
-  ansible.builtin.uri:
-    url: https://api.cloudflare.com/client/v4/zones
-    method: POST
-    headers: "{{ cloudflare_zones_zone_headers }}"
-    body_format: json
-    body:
-      name: "{{ cloudflare_zone_name }}"
-      account:
-        id: "{{ cloudflare_zones_account_ids[cloudflare_zone_account_name] }}"
-      jump_start: "{{ cloudflare_zone_jump_start }}"
-      type: "{{ cloudflare_zone_type }}"
-  when:
-    - cloudflare_zones_account_ids[cloudflare_zone_account_name] is defined
-    - cloudflare_zones_zone_ids[cloudflare_zone_name] is not defined
+- name: Ensure cloudflare zone {{ cloudflare_zone_name }}
+  damex.cloudflare.cloudflare_zone:
+    name: "{{ cloudflare_zone_name }}"
+    account_name: "{{ cloudflare_zone_account_name }}"
+    account_email: "{{ cloudflare_zone_account_email }}"
+    account_api_key: "{{ cloudflare_zone_account_api_key }}"
+    api_token: "{{ cloudflare_zone_api_token }}"
+    state: "{{ cloudflare_zone_state }}"
+    jump_start: "{{ cloudflare_zone_jump_start }}"
+    type: "{{ cloudflare_zone_type }}"
