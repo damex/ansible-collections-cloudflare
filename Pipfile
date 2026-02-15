@@ -10,6 +10,7 @@ ansible-core = "==2.20.2"
 ansible-lint = "==26.1.1"
 yamllint = "==1.38.0"
 pylint = {extras = ["spelling"], version = "==4.0.4"}
+pytest = "==9.0.2"
 
 [requires]
 python_version = "3.14"
