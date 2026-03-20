@@ -4,9 +4,9 @@
   vars:
     cloudflare_zone_name: "{{ cloudflare_zone.name }}"
     cloudflare_zone_account_name: "{{ cloudflare_zone.account_name | default(cloudflare_zones_account_name) }}"
-    cloudflare_zone_account_email: "{{ cloudflare_zone.account_email | default(cloudflare_zones_account_email) }}"
-    cloudflare_zone_account_api_key: "{{ cloudflare_zone.account_api_key | default(cloudflare_zones_account_api_key) }}"
-    cloudflare_zone_api_token: "{{ cloudflare_zone.api_token | default(cloudflare_zones_api_token) }}"
+    cloudflare_zone_account_email: "{{ cloudflare_zone.account_email | default(cloudflare_zones_account_email) | default(omit) }}"
+    cloudflare_zone_account_api_key: "{{ cloudflare_zone.account_api_key | default(cloudflare_zones_account_api_key) | default(omit) }}"
+    cloudflare_zone_api_token: "{{ cloudflare_zone.api_token | default(cloudflare_zones_api_token) | default(omit) }}"
     cloudflare_zone_state: "{{ cloudflare_zone.state | default(cloudflare_zones_default_state) }}"
     cloudflare_zone_jump_start: "{{ cloudflare_zone.jump_start | default(cloudflare_zones_default_jump_start) }}"
     cloudflare_zone_type: "{{ cloudflare_zone.type | default(cloudflare_zones_default_type) }}"
