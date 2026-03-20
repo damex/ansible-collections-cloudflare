@@ -1,0 +1,11 @@
+[tool.mypy]
+strict = true
+explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+module = [
+    "ansible.module_utils.basic",
+    "ansible.module_utils.urls",
+    "ansible.module_utils.common.text.converters",
+]
+ignore_missing_imports = true
