@@ -1,5 +1,5 @@
 ---
-name: linting
+name: unit-tests
 on: # yamllint disable-line rule:truthy
   push:
     branches:
@@ -11,8 +11,8 @@ on: # yamllint disable-line rule:truthy
       - reopened
 
 jobs:
-  lint:
-    name: lint
+  unit-tests:
+    name: unit-tests
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -26,5 +26,4 @@ jobs:
           python-version: "3.14"
       - run: pip install --user pipenv
       - run: pipenv install --deploy
-      - run: pipenv run lint
-      - run: pipenv run lint-plugins
+      - run: pipenv run test
