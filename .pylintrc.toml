@@ -1,2 +1,16 @@
+[tool.pylint.main]
+load-plugins = "pylint_pytest"
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.messages_control]
+enable = "all"
+# ansible-test sanity wants imports to be after documentation
+disable = ["wrong-import-position"]
+
+[tool.pylint.similarities]
+min-similarity-lines = 12
+
 [tool.pylint.variables]
 allow-global-unused-variables = false
