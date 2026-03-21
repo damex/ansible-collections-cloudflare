@@ -31,17 +31,17 @@ attributes:
 options:
   name:
     description:
-      - The domain name of the zone.
+      - Zone domain name.
     required: true
     type: str
   account_name:
     description:
-      - The name of the Cloudflare account to create the zone in.
+      - Cloudflare account name.
     required: true
     type: str
   state:
     description:
-      - Whether the zone should be present or absent.
+      - Zone state.
     type: str
     choices:
       - absent
@@ -49,12 +49,12 @@ options:
     default: present
   jump_start:
     description:
-      - Whether to automatically fetch existing DNS records on zone creation.
+      - Zone jump start.
     type: bool
     default: false
   type:
     description:
-      - The type of zone.
+      - Zone type.
     type: str
     choices:
       - full
@@ -63,27 +63,27 @@ options:
     default: full
   api_token:
     description:
-      - API token for authentication.
+      - Cloudflare API token.
       - Required if O(account_email) and O(account_api_key) are not provided.
       - Can be specified in E(CLOUDFLARE_TOKEN) environment variable.
     type: str
   account_email:
     description:
-      - Account email for legacy authentication.
+      - Cloudflare account email.
       - Required together with O(account_api_key) if O(api_token) is not provided.
     type: str
   account_api_key:
     description:
-      - Account API key for legacy authentication.
+      - Cloudflare account API key.
       - Required together with O(account_email) if O(api_token) is not provided.
     type: str
   universal_ssl:
     description:
-      - Whether Universal SSL is enabled for the zone.
+      - Universal SSL.
     type: bool
   ssl_mode:
     description:
-      - The SSL encryption mode for the zone.
+      - SSL mode.
     type: str
     choices:
       - "off"
@@ -93,11 +93,11 @@ options:
       - origin_pull
   always_https:
     description:
-      - Whether to redirect all HTTP requests to HTTPS.
+      - Always HTTPS redirect.
     type: bool
   min_tls_version:
     description:
-      - The minimum TLS version for HTTPS connections.
+      - Minimum TLS version.
     type: str
     choices:
       - "1.0"
