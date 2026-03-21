@@ -1,6 +1,7 @@
 # damex.cloudflare
 
 [![](https://github.com/damex/ansible-collections-cloudflare/workflows/linting/badge.svg)](https://github.com/damex/ansible-collections-cloudflare/actions)
+[![](https://github.com/damex/ansible-collections-cloudflare/workflows/documentation/badge.svg)](https://cloudflare.ansible.damex.org)
 
 Ansible collection for [Cloudflare](https://www.cloudflare.com/).
 
@@ -41,6 +42,10 @@ collections:
 ```
 ansible-galaxy collection install -r requirements.yml
 ```
+
+## Documentation
+
+Automatically generated documentation is available at [cloudflare.ansible.damex.org](https://cloudflare.ansible.damex.org).
 
 ## Issues
 

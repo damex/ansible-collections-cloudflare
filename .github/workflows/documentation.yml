@@ -1,0 +1,34 @@
+---
+name: documentation
+on: # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - production
+
+concurrency:
+  group: documentation
+  cancel-in-progress: true
+
+jobs:
+  documentation:
+    name: documentation
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ansible_collections/damex/cloudflare
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: ansible_collections/damex/cloudflare
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - run: pip install --user pipenv
+      - run: pipenv install --deploy
+      - run: pipenv run documentation
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy documentation/build/html --project-name=ansible-collections-cloudflare
+          workingDirectory: ansible_collections/damex/cloudflare
