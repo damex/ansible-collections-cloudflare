@@ -8,25 +8,26 @@ Unit tests for the cloudflare_zone module.
 
 from __future__ import annotations
 
-import io
 import json
 import os
 from collections.abc import Generator
 from contextlib import contextmanager
 from typing import Any
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
+import CloudFlare
 import pytest
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_bytes
 
 from ansible_collections.damex.cloudflare.plugins.modules import (
     cloudflare_zone,
 )
 from ansible_collections.damex.cloudflare.tests.unit.plugins.modules.conftest import (
     ACCOUNT,
+    UNIVERSAL_SSL_DISABLED,
+    UNIVERSAL_SSL_ENABLED,
     ZONE,
-    cf_response,
+    CFMock,
 )
 
 __all__ = [
@@ -39,12 +40,21 @@ __all__ = [
     "test_absent_zone_exists",
     "test_absent_zone_missing",
     "test_absent_check_mode",
-    "test_token_auth_header",
-    "test_legacy_auth_headers",
+    "test_token_auth_constructor",
+    "test_legacy_auth_constructor",
     "test_api_error_response",
-    "test_empty_body_response",
     "test_env_token_fallback",
     "test_empty_api_token",
+    "test_present_universal_ssl_changed",
+    "test_present_universal_ssl_no_change",
+    "test_present_ssl_mode_changed",
+    "test_present_ssl_mode_no_change",
+    "test_present_always_https_changed",
+    "test_present_always_https_false_changed",
+    "test_present_always_https_no_change",
+    "test_present_min_tls_version_changed",
+    "test_present_min_tls_version_no_change",
+    "test_present_settings_check_mode",
 ]
 
 
@@ -131,7 +141,7 @@ def set_module_args(args: dict[str, Any]) -> Generator[None, None, None]:
     """
     args.setdefault("_ansible_remote_tmp", "/tmp")
     args.setdefault("_ansible_keep_remote_files", False)
-    serialized = to_bytes(json.dumps({"ANSIBLE_MODULE_ARGS": args}))
+    serialized = json.dumps({"ANSIBLE_MODULE_ARGS": args}).encode()
     with (
         patch(
             "ansible.module_utils.basic._ANSIBLE_ARGS",
@@ -174,63 +184,63 @@ def test_missing_params(args: dict[str, Any]) -> None:
             cloudflare_zone.main()
 
 
-def test_present_zone_exists(fetch_url_mock: MagicMock) -> None:
+def test_present_zone_exists(cf_mock: CFMock) -> None:
     """Existing zone — no change."""
     with set_module_args(dict(ARGS)):
-        fetch_url_mock.return_value = cf_response([ZONE])
+        cf_mock.client.zones.get.return_value = [ZONE]
         with pytest.raises(AnsibleExitJson) as exc:
             cloudflare_zone.main()
     assert exc.value.result["changed"] is False
     assert exc.value.result["zone"]["name"] == "example.com"
 
 
-def test_present_zone_created(fetch_url_mock: MagicMock) -> None:
+def test_present_zone_created(cf_mock: CFMock) -> None:
     """Missing zone — create it."""
     with set_module_args(dict(ARGS)):
-        fetch_url_mock.side_effect = [
-            cf_response([]),
-            cf_response([ACCOUNT]),
-            cf_response(ZONE),
-        ]
+        cf_mock.client.zones.get.return_value = []
+        cf_mock.client.accounts.get.return_value = [ACCOUNT]
+        cf_mock.client.zones.post.return_value = ZONE
         with pytest.raises(AnsibleExitJson) as exc:
             cloudflare_zone.main()
     assert exc.value.result["changed"] is True
-    assert fetch_url_mock.call_count == 3
+    cf_mock.client.zones.post.assert_called_once()
 
 
-def test_present_verify_payload(fetch_url_mock: MagicMock) -> None:
+def test_present_verify_payload(cf_mock: CFMock) -> None:
     """Verify POST payload for zone creation."""
-    args: dict[str, Any] = {
+    with set_module_args({
         "name": "example.com",
         "account_name": "my-account",
         "api_token": "test-token",
         "jump_start": True,
         "type": "partial",
-    }
-    with set_module_args(args):
-        fetch_url_mock.side_effect = [
-            cf_response([]),
-            cf_response([ACCOUNT]),
-            cf_response(ZONE),
-        ]
+    }):
+        cf_mock.client.zones.get.return_value = []
+        cf_mock.client.accounts.get.return_value = [ACCOUNT]
+        cf_mock.client.zones.post.return_value = ZONE
         with pytest.raises(AnsibleExitJson):
             cloudflare_zone.main()
-    payload = json.loads(fetch_url_mock.call_args.kwargs["data"])
-    assert payload["name"] == "example.com"
-    assert payload["jump_start"] is True
-    assert payload["type"] == "partial"
+    cf_mock.client.zones.post.assert_called_once_with(
+        data={
+            "name": "example.com",
+            "account": {"id": "acct-id-456"},
+            "jump_start": True,
+            "type": "partial",
+        },
+    )
 
 
-def test_present_account_not_found(fetch_url_mock: MagicMock) -> None:
+def test_present_account_not_found(cf_mock: CFMock) -> None:
     """Missing account — fail."""
     with set_module_args(dict(ARGS)):
-        fetch_url_mock.side_effect = [cf_response([]), cf_response([])]
+        cf_mock.client.zones.get.return_value = []
+        cf_mock.client.accounts.get.return_value = []
         with pytest.raises(AnsibleFailJson) as exc:
             cloudflare_zone.main()
     assert "not found" in exc.value.result["msg"]
 
 
-def test_present_check_mode(fetch_url_mock: MagicMock) -> None:
+def test_present_check_mode(cf_mock: CFMock) -> None:
     """Check mode — changed=True, no create call."""
     with set_module_args({
         "name": "example.com",
@@ -238,14 +248,14 @@ def test_present_check_mode(fetch_url_mock: MagicMock) -> None:
         "api_token": "test-token",
         "_ansible_check_mode": True,
     }):
-        fetch_url_mock.return_value = cf_response([])
+        cf_mock.client.zones.get.return_value = []
         with pytest.raises(AnsibleExitJson) as exc:
             cloudflare_zone.main()
     assert exc.value.result["changed"] is True
-    assert fetch_url_mock.call_count == 1
+    cf_mock.client.zones.post.assert_not_called()
 
 
-def test_absent_zone_exists(fetch_url_mock: MagicMock) -> None:
+def test_absent_zone_exists(cf_mock: CFMock) -> None:
     """Zone exists — delete it."""
     with set_module_args({
         "name": "example.com",
@@ -253,16 +263,14 @@ def test_absent_zone_exists(fetch_url_mock: MagicMock) -> None:
         "api_token": "test-token",
         "state": "absent",
     }):
-        fetch_url_mock.side_effect = [
-            cf_response([ZONE]),
-            cf_response({"id": ZONE["id"]}),
-        ]
+        cf_mock.client.zones.get.return_value = [ZONE]
         with pytest.raises(AnsibleExitJson) as exc:
             cloudflare_zone.main()
     assert exc.value.result["changed"] is True
+    cf_mock.client.zones.delete.assert_called_once_with(ZONE["id"])
 
 
-def test_absent_zone_missing(fetch_url_mock: MagicMock) -> None:
+def test_absent_zone_missing(cf_mock: CFMock) -> None:
     """Zone missing — no change."""
     with set_module_args({
         "name": "example.com",
@@ -270,67 +278,60 @@ def test_absent_zone_missing(fetch_url_mock: MagicMock) -> None:
         "api_token": "test-token",
         "state": "absent",
     }):
-        fetch_url_mock.return_value = cf_response([])
+        cf_mock.client.zones.get.return_value = []
         with pytest.raises(AnsibleExitJson) as exc:
             cloudflare_zone.main()
     assert exc.value.result["changed"] is False
+    cf_mock.client.zones.delete.assert_not_called()
 
 
-def test_absent_check_mode(fetch_url_mock: MagicMock) -> None:
+def test_absent_check_mode(cf_mock: CFMock) -> None:
     """Check mode — changed=True, no delete call."""
-    args: dict[str, Any] = {
+    with set_module_args({
         "name": "example.com",
         "account_name": "my-account",
         "api_token": "test-token",
         "state": "absent",
         "_ansible_check_mode": True,
-    }
-    with set_module_args(args):
-        fetch_url_mock.return_value = cf_response([ZONE])
+    }):
+        cf_mock.client.zones.get.return_value = [ZONE]
         with pytest.raises(AnsibleExitJson) as exc:
             cloudflare_zone.main()
     assert exc.value.result["changed"] is True
-    assert fetch_url_mock.call_count == 1
+    cf_mock.client.zones.delete.assert_not_called()
 
 
-def test_token_auth_header(fetch_url_mock: MagicMock) -> None:
-    """Bearer token header is set."""
+def test_token_auth_constructor(cf_mock: CFMock) -> None:
+    """Bearer token is passed to the CloudFlare constructor."""
     with set_module_args(dict(ARGS)):
-        fetch_url_mock.return_value = cf_response([ZONE])
+        cf_mock.client.zones.get.return_value = [ZONE]
         with pytest.raises(AnsibleExitJson):
             cloudflare_zone.main()
-    headers = fetch_url_mock.call_args.kwargs["headers"]
-    assert headers["Authorization"] == "Bearer test-token"
+    cf_mock.cls.assert_called_once_with(token="test-token")
 
 
-def test_legacy_auth_headers(fetch_url_mock: MagicMock) -> None:
-    """X-Auth-Email and X-Auth-Key headers are set."""
-    args: dict[str, str] = {
+def test_legacy_auth_constructor(cf_mock: CFMock) -> None:
+    """Email and key are passed to the CloudFlare constructor."""
+    with set_module_args({
         "name": "example.com",
         "account_name": "my-account",
         "account_email": "u@e.com",
         "account_api_key": "legacy-key",
-    }
-    with set_module_args(args):
-        fetch_url_mock.return_value = cf_response([ZONE])
+    }):
+        cf_mock.client.zones.get.return_value = [ZONE]
         with pytest.raises(AnsibleExitJson):
             cloudflare_zone.main()
-    headers = fetch_url_mock.call_args.kwargs["headers"]
-    assert headers["X-Auth-Email"] == "u@e.com"
-    assert headers["X-Auth-Key"] == "legacy-key"
+    cf_mock.cls.assert_called_once_with(
+        email="u@e.com",
+        key="legacy-key",
+    )
 
 
-def test_api_error_response(fetch_url_mock: MagicMock) -> None:
-    """API returns success=false — fail_json with code and message."""
-    body: dict[str, Any] = {
-        "success": False,
-        "errors": [{"code": 1003, "message": "Invalid token"}],
-        "result": None,
-    }
+def test_api_error_response(cf_mock: CFMock) -> None:
+    """Library raises CloudFlareAPIError — fail_json with code and message."""
     with set_module_args(dict(ARGS)):
-        fetch_url_mock.return_value = (
-            io.BytesIO(json.dumps(body).encode()),
-            {"status": 400},
+        cf_mock.client.zones.get.side_effect = (
+            CloudFlare.exceptions.CloudFlareAPIError(1003, "Invalid token")
         )
         with pytest.raises(AnsibleFailJson) as exc:
             cloudflare_zone.main()
@@ -338,29 +339,15 @@ def test_api_error_response(fetch_url_mock: MagicMock) -> None:
     assert "Invalid token" in exc.value.result["msg"]
 
 
-def test_empty_body_response(fetch_url_mock: MagicMock) -> None:
-    """Empty API response body — fail_json with empty body message."""
-    with set_module_args(dict(ARGS)):
-        fetch_url_mock.return_value = (None, {})
-        with pytest.raises(AnsibleFailJson) as exc:
-            cloudflare_zone.main()
-    assert "Empty API response" in exc.value.result["msg"]
-
-
-def test_env_token_fallback(fetch_url_mock: MagicMock) -> None:
+def test_env_token_fallback(cf_mock: CFMock) -> None:
     """CLOUDFLARE_TOKEN environment variable is used when api_token is absent."""
-    args: dict[str, str] = {"name": "example.com", "account_name": "my-account"}
-    with set_module_args(args):
-        with patch.dict(
-            os.environ,
-            {"CLOUDFLARE_TOKEN": "env-token"},
-        ):
-            fetch_url_mock.return_value = cf_response([ZONE])
+    with set_module_args({"name": "example.com", "account_name": "my-account"}):
+        with patch.dict(os.environ, {"CLOUDFLARE_TOKEN": "env-token"}):
+            cf_mock.client.zones.get.return_value = [ZONE]
             with pytest.raises(AnsibleExitJson) as exc:
                 cloudflare_zone.main()
     assert exc.value.result["changed"] is False
-    headers = fetch_url_mock.call_args.kwargs["headers"]
-    assert headers["Authorization"] == "Bearer env-token"
+    cf_mock.cls.assert_called_once_with(token="env-token")
 
 
 def test_empty_api_token() -> None:
@@ -373,3 +360,194 @@ def test_empty_api_token() -> None:
         with pytest.raises(AnsibleFailJson) as exc:
             cloudflare_zone.main()
     assert "api_token" in exc.value.result["msg"] or "account_email" in exc.value.result["msg"]
+
+
+def test_present_universal_ssl_changed(cf_mock: CFMock) -> None:
+    """universal_ssl differs from current state — changed=True and PATCH is sent."""
+    with set_module_args({
+        "name": "example.com",
+        "account_name": "my-account",
+        "api_token": "test-token",
+        "universal_ssl": True,
+    }):
+        cf_mock.client.zones.get.return_value = [ZONE]
+        cf_mock.client.zones.ssl.universal.settings.get.return_value = UNIVERSAL_SSL_DISABLED
+        with pytest.raises(AnsibleExitJson) as exc:
+            cloudflare_zone.main()
+    assert exc.value.result["changed"] is True
+    cf_mock.client.zones.ssl.universal.settings.patch.assert_called_once_with(
+        ZONE["id"],
+        data={"enabled": True},
+    )
+
+
+def test_present_universal_ssl_no_change(cf_mock: CFMock) -> None:
+    """universal_ssl matches current state — changed=False, no PATCH sent."""
+    with set_module_args({
+        "name": "example.com",
+        "account_name": "my-account",
+        "api_token": "test-token",
+        "universal_ssl": True,
+    }):
+        cf_mock.client.zones.get.return_value = [ZONE]
+        cf_mock.client.zones.ssl.universal.settings.get.return_value = UNIVERSAL_SSL_ENABLED
+        with pytest.raises(AnsibleExitJson) as exc:
+            cloudflare_zone.main()
+    assert exc.value.result["changed"] is False
+    cf_mock.client.zones.ssl.universal.settings.patch.assert_not_called()
+
+
+def test_present_ssl_mode_changed(cf_mock: CFMock) -> None:
+    """ssl_mode differs from current state — changed=True and PATCH is sent."""
+    with set_module_args({
+        "name": "example.com",
+        "account_name": "my-account",
+        "api_token": "test-token",
+        "ssl_mode": "full",
+    }):
+        cf_mock.client.zones.get.return_value = [ZONE]
+        cf_mock.client.zones.settings.ssl.get.return_value = {"id": "ssl", "value": "flexible"}
+        with pytest.raises(AnsibleExitJson) as exc:
+            cloudflare_zone.main()
+    assert exc.value.result["changed"] is True
+    cf_mock.client.zones.settings.ssl.patch.assert_called_once_with(
+        ZONE["id"],
+        data={"value": "full"},
+    )
+
+
+def test_present_ssl_mode_no_change(cf_mock: CFMock) -> None:
+    """ssl_mode matches current state — changed=False, no PATCH sent."""
+    with set_module_args({
+        "name": "example.com",
+        "account_name": "my-account",
+        "api_token": "test-token",
+        "ssl_mode": "full",
+    }):
+        cf_mock.client.zones.get.return_value = [ZONE]
+        cf_mock.client.zones.settings.ssl.get.return_value = {"id": "ssl", "value": "full"}
+        with pytest.raises(AnsibleExitJson) as exc:
+            cloudflare_zone.main()
+    assert exc.value.result["changed"] is False
+    cf_mock.client.zones.settings.ssl.patch.assert_not_called()
+
+
+def test_present_always_https_changed(cf_mock: CFMock) -> None:
+    """always_https=True when current is off — changed=True and PATCH is sent."""
+    with set_module_args({
+        "name": "example.com",
+        "account_name": "my-account",
+        "api_token": "test-token",
+        "always_https": True,
+    }):
+        cf_mock.client.zones.get.return_value = [ZONE]
+        cf_mock.client.zones.settings.always_use_https.get.return_value = {
+            "id": "always_use_https",
+            "value": "off",
+        }
+        with pytest.raises(AnsibleExitJson) as exc:
+            cloudflare_zone.main()
+    assert exc.value.result["changed"] is True
+    cf_mock.client.zones.settings.always_use_https.patch.assert_called_once_with(
+        ZONE["id"],
+        data={"value": "on"},
+    )
+
+
+def test_present_always_https_false_changed(cf_mock: CFMock) -> None:
+    """always_https=False when current is on — changed=True and PATCH sends off."""
+    with set_module_args({
+        "name": "example.com",
+        "account_name": "my-account",
+        "api_token": "test-token",
+        "always_https": False,
+    }):
+        cf_mock.client.zones.get.return_value = [ZONE]
+        cf_mock.client.zones.settings.always_use_https.get.return_value = {
+            "id": "always_use_https",
+            "value": "on",
+        }
+        with pytest.raises(AnsibleExitJson) as exc:
+            cloudflare_zone.main()
+    assert exc.value.result["changed"] is True
+    cf_mock.client.zones.settings.always_use_https.patch.assert_called_once_with(
+        ZONE["id"],
+        data={"value": "off"},
+    )
+
+
+def test_present_always_https_no_change(cf_mock: CFMock) -> None:
+    """always_https=True when current is on — changed=False, no PATCH sent."""
+    with set_module_args({
+        "name": "example.com",
+        "account_name": "my-account",
+        "api_token": "test-token",
+        "always_https": True,
+    }):
+        cf_mock.client.zones.get.return_value = [ZONE]
+        cf_mock.client.zones.settings.always_use_https.get.return_value = {
+            "id": "always_use_https",
+            "value": "on",
+        }
+        with pytest.raises(AnsibleExitJson) as exc:
+            cloudflare_zone.main()
+    assert exc.value.result["changed"] is False
+    cf_mock.client.zones.settings.always_use_https.patch.assert_not_called()
+
+
+def test_present_min_tls_version_changed(cf_mock: CFMock) -> None:
+    """min_tls_version differs from current state — changed=True and PATCH is sent."""
+    with set_module_args({
+        "name": "example.com",
+        "account_name": "my-account",
+        "api_token": "test-token",
+        "min_tls_version": "1.2",
+    }):
+        cf_mock.client.zones.get.return_value = [ZONE]
+        cf_mock.client.zones.settings.min_tls_version.get.return_value = {
+            "id": "min_tls_version",
+            "value": "1.0",
+        }
+        with pytest.raises(AnsibleExitJson) as exc:
+            cloudflare_zone.main()
+    assert exc.value.result["changed"] is True
+    cf_mock.client.zones.settings.min_tls_version.patch.assert_called_once_with(
+        ZONE["id"],
+        data={"value": "1.2"},
+    )
+
+
+def test_present_min_tls_version_no_change(cf_mock: CFMock) -> None:
+    """min_tls_version matches current state — changed=False, no PATCH sent."""
+    with set_module_args({
+        "name": "example.com",
+        "account_name": "my-account",
+        "api_token": "test-token",
+        "min_tls_version": "1.2",
+    }):
+        cf_mock.client.zones.get.return_value = [ZONE]
+        cf_mock.client.zones.settings.min_tls_version.get.return_value = {
+            "id": "min_tls_version",
+            "value": "1.2",
+        }
+        with pytest.raises(AnsibleExitJson) as exc:
+            cloudflare_zone.main()
+    assert exc.value.result["changed"] is False
+    cf_mock.client.zones.settings.min_tls_version.patch.assert_not_called()
+
+
+def test_present_settings_check_mode(cf_mock: CFMock) -> None:
+    """Check mode with differing setting — changed=True but no PATCH sent."""
+    with set_module_args({
+        "name": "example.com",
+        "account_name": "my-account",
+        "api_token": "test-token",
+        "universal_ssl": True,
+        "_ansible_check_mode": True,
+    }):
+        cf_mock.client.zones.get.return_value = [ZONE]
+        cf_mock.client.zones.ssl.universal.settings.get.return_value = UNIVERSAL_SSL_DISABLED
+        with pytest.raises(AnsibleExitJson) as exc:
+            cloudflare_zone.main()
+    assert exc.value.result["changed"] is True
+    cf_mock.client.zones.ssl.universal.settings.patch.assert_not_called()
