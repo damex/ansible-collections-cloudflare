@@ -19,6 +19,8 @@ author:
 short_description: Ensure Cloudflare zones
 description:
   - 'Ensures Cloudflare zones using the Cloudflare API, see the docs: U(https://api.cloudflare.com/).'
+requirements:
+  - python3-cloudflare >= 2.11.1
 attributes:
   check_mode:
     support: full
@@ -75,11 +77,33 @@ options:
       - Account API key for legacy authentication.
       - Required together with O(account_email) if O(api_token) is not provided.
     type: str
-  timeout:
+  universal_ssl:
     description:
-      - Timeout for Cloudflare API calls.
-    type: int
-    default: 30
+      - Whether Universal SSL is enabled for the zone.
+    type: bool
+  ssl_mode:
+    description:
+      - The SSL encryption mode for the zone.
+    type: str
+    choices:
+      - "off"
+      - flexible
+      - full
+      - strict
+      - origin_pull
+  always_https:
+    description:
+      - Whether to redirect all HTTP requests to HTTPS.
+    type: bool
+  min_tls_version:
+    description:
+      - The minimum TLS version for HTTPS connections.
+    type: str
+    choices:
+      - "1.0"
+      - "1.1"
+      - "1.2"
+      - "1.3"
 """
 
 EXAMPLES = r"""
@@ -111,6 +135,16 @@ EXAMPLES = r"""
     account_email: user@example.com
     account_api_key: "{{ cloudflare_api_key }}"
     state: present
+
+- name: Ensure zone with security settings
+  damex.cloudflare.cloudflare_zone:
+    name: example.com
+    account_name: my-account
+    api_token: "{{ cloudflare_api_token }}"
+    ssl_mode: full
+    always_https: true
+    min_tls_version: "1.2"
+    universal_ssl: true
 """
 
 RETURN = r"""
@@ -146,23 +180,20 @@ zone:
       sample: {"id": "023e105f4ecef8ad9ca31a8372d0c353", "name": "my-account"}
 """
 
-import json
 from typing import Any
-from urllib.parse import quote
 
 from ansible.module_utils.basic import AnsibleModule, env_fallback
-from ansible.module_utils.common.text.converters import to_text
-from ansible.module_utils.urls import fetch_url
 
-CF_API = "https://api.cloudflare.com/client/v4"
+try:
+    import CloudFlare
+    HAS_CLOUDFLARE = True
+except ImportError:
+    HAS_CLOUDFLARE = False
 
 
 class CloudflareAPI:
     """
-    Client for the Cloudflare API.
-
-    >>> api.headers["Content-Type"]
-    'application/json'
+    Client wrapping the CloudFlare Python library.
     """
 
     def __init__(self, module: Any) -> None:
@@ -170,87 +201,24 @@ class CloudflareAPI:
         Initialize the client.
 
         >>> api = CloudflareAPI(module)
-        >>> api.headers["Authorization"]
-        'Bearer t'
         """
         self.module = module
-        self.timeout: int = module.params["timeout"]
-        self.headers: dict[str, str] = {}
-
         api_token = module.params["api_token"] or None
         account_email = module.params["account_email"]
         account_api_key = module.params["account_api_key"]
 
         if api_token:
-            self.headers = {
-                "Authorization": f"Bearer {api_token}",
-                "Content-Type": "application/json",
-            }
+            self.client = CloudFlare.CloudFlare(token=api_token)
         elif account_email and account_api_key:
-            self.headers = {
-                "X-Auth-Email": account_email,
-                "X-Auth-Key": account_api_key,
-                "Content-Type": "application/json",
-            }
+            self.client = CloudFlare.CloudFlare(
+                email=account_email,
+                key=account_api_key,
+            )
         else:
             module.fail_json(
                 msg="Either api_token or both account_email"
                     " and account_api_key are required"
             )
-
-    def _api_call(
-        self,
-        endpoint: str,
-        method: str = "GET",
-        payload: dict[str, Any] | None = None,
-    ) -> Any:
-        """
-        Make an API call.
-
-        >>> api._api_call("/zones?name=example.com")
-        [{'id': '...', 'name': 'example.com', ...}]
-        """
-        data = json.dumps(payload) if payload else None
-
-        resp, info = fetch_url(
-            self.module,
-            url=CF_API + endpoint,
-            headers=self.headers,
-            data=data,
-            method=method,
-            timeout=self.timeout,
-        )
-
-        try:
-            body = resp.read()
-        except AttributeError:
-            body = info.get("body")
-
-        if not body:
-            self.module.fail_json(
-                msg=f"Empty API response for {method} {endpoint}"
-            )
-
-        result = json.loads(
-            to_text(
-                body,
-                errors="surrogate_or_strict",
-            )
-        )
-
-        if not result.get("success"):
-            errors = "; ".join(
-                f"{e['code']}: {e['message']}"
-                for e in result.get(
-                    "errors",
-                    [],
-                )
-            )
-            self.module.fail_json(
-                msg=f"API error on {method} {endpoint}: {errors}"
-            )
-
-        return result["result"]
 
     def get_zone(self, name: str) -> dict[str, Any] | None:
         """
@@ -259,8 +227,12 @@ class CloudflareAPI:
         >>> api.get_zone("example.com")
         {'id': '...', 'name': 'example.com', 'status': 'active', 'type': 'full'}
         """
-        zones = self._api_call(f"/zones?name={name}")
-        return next(iter(zones), None)
+        try:
+            zones = self.client.zones.get(params={"name": name})
+            return next(iter(zones), None)
+        except CloudFlare.exceptions.CloudFlareAPIError as exc:
+            self.module.fail_json(msg=f"API error {int(exc)}: {exc}")
+            return None
 
     def get_account(self, name: str) -> dict[str, Any] | None:
         """
@@ -269,8 +241,12 @@ class CloudflareAPI:
         >>> api.get_account("my account")
         {'id': '...', 'name': 'my account'}
         """
-        accounts = self._api_call(f"/accounts?name={quote(name)}")
-        return next(iter(accounts), None)
+        try:
+            accounts = self.client.accounts.get(params={"name": name})
+            return next(iter(accounts), None)
+        except CloudFlare.exceptions.CloudFlareAPIError as exc:
+            self.module.fail_json(msg=f"API error {int(exc)}: {exc}")
+            return None
 
     def create_zone(
         self,
@@ -282,24 +258,22 @@ class CloudflareAPI:
         """
         Create a zone.
 
-        >>> api.create_zone(
-        ...     "example.com",
-        ...     "acct-id",
-        ...     jump_start=True,
-        ... )
+        >>> api.create_zone("example.com", "acct-id", jump_start=True)
         {'id': '...', 'name': 'example.com', 'status': 'pending', 'type': 'full'}
         """
-        zone: dict[str, Any] = self._api_call(
-            "/zones",
-            "POST",
-            {
-                "name": name,
-                "account": {"id": account_id},
-                "jump_start": jump_start,
-                "type": zone_type,
-            },
-        )
-        return zone
+        try:
+            zone: dict[str, Any] = self.client.zones.post(
+                data={
+                    "name": name,
+                    "account": {"id": account_id},
+                    "jump_start": jump_start,
+                    "type": zone_type,
+                },
+            )
+            return zone
+        except CloudFlare.exceptions.CloudFlareAPIError as exc:
+            self.module.fail_json(msg=f"API error {int(exc)}: {exc}")
+            return {}
 
     def delete_zone(self, zone_id: str) -> None:
         """
@@ -307,10 +281,139 @@ class CloudflareAPI:
 
         >>> api.delete_zone("zone-id-123")
         """
-        self._api_call(
-            f"/zones/{zone_id}",
-            "DELETE",
-        )
+        try:
+            self.client.zones.delete(zone_id)
+        except CloudFlare.exceptions.CloudFlareAPIError as exc:
+            self.module.fail_json(msg=f"API error {int(exc)}: {exc}")
+
+    def get_zone_setting(self, zone_id: str, setting_name: str) -> Any:
+        """
+        Get a zone setting value.
+
+        >>> api.get_zone_setting("zone-id", "ssl")
+        'full'
+        """
+        try:
+            result = getattr(self.client.zones.settings, setting_name).get(zone_id)
+            return result["value"]
+        except CloudFlare.exceptions.CloudFlareAPIError as exc:
+            self.module.fail_json(msg=f"API error {int(exc)}: {exc}")
+            return None
+
+    def set_zone_setting(
+        self,
+        zone_id: str,
+        setting_name: str,
+        value: Any,
+    ) -> None:
+        """
+        Set a zone setting value.
+
+        >>> api.set_zone_setting("zone-id", "ssl", "full")
+        """
+        try:
+            getattr(self.client.zones.settings, setting_name).patch(
+                zone_id,
+                data={"value": value},
+            )
+        except CloudFlare.exceptions.CloudFlareAPIError as exc:
+            self.module.fail_json(msg=f"API error {int(exc)}: {exc}")
+
+    def get_universal_ssl(self, zone_id: str) -> bool:
+        """
+        Get Universal SSL enabled state.
+
+        >>> api.get_universal_ssl("zone-id")
+        True
+        """
+        try:
+            result = self.client.zones.ssl.universal.settings.get(zone_id)
+            return bool(result["enabled"])
+        except CloudFlare.exceptions.CloudFlareAPIError as exc:
+            self.module.fail_json(msg=f"API error {int(exc)}: {exc}")
+            return False
+
+    def set_universal_ssl(self, zone_id: str, enabled: bool) -> None:
+        """
+        Set Universal SSL enabled state.
+
+        >>> api.set_universal_ssl("zone-id", True)
+        """
+        try:
+            self.client.zones.ssl.universal.settings.patch(
+                zone_id,
+                data={"enabled": enabled},
+            )
+        except CloudFlare.exceptions.CloudFlareAPIError as exc:
+            self.module.fail_json(msg=f"API error {int(exc)}: {exc}")
+
+    def ensure_zone_setting(
+        self,
+        zone_id: str,
+        setting_name: str,
+        value: Any,
+    ) -> bool:
+        """
+        Ensure a zone setting matches the desired value.
+
+        >>> api.ensure_zone_setting("zone-id", "ssl", "full")
+        True
+        """
+        if self.get_zone_setting(zone_id, setting_name) != value:
+            if not self.module.check_mode:
+                self.set_zone_setting(zone_id, setting_name, value)
+            return True
+        return False
+
+    def ensure_universal_ssl(self, zone_id: str, enabled: bool) -> bool:
+        """
+        Ensure Universal SSL matches the desired enabled state.
+
+        >>> api.ensure_universal_ssl("zone-id", True)
+        True
+        """
+        if self.get_universal_ssl(zone_id) != enabled:
+            if not self.module.check_mode:
+                self.set_universal_ssl(zone_id, enabled)
+            return True
+        return False
+
+
+def _ensure_zone_settings(
+    module: Any,
+    cf_api: CloudflareAPI,
+    zone_id: str,
+) -> bool:
+    """
+    Ensure all optional zone settings match the desired state.
+
+    >>> _ensure_zone_settings(module, cf_api, "zone-id")
+    False
+    """
+    changed = False
+
+    universal_ssl = module.params["universal_ssl"]
+    if universal_ssl is not None:
+        if cf_api.ensure_universal_ssl(zone_id, universal_ssl):
+            changed = True
+
+    ssl_mode = module.params["ssl_mode"]
+    if ssl_mode is not None:
+        if cf_api.ensure_zone_setting(zone_id, "ssl", ssl_mode):
+            changed = True
+
+    always_https = module.params["always_https"]
+    if always_https is not None:
+        always_https_api_value = "on" if always_https else "off"
+        if cf_api.ensure_zone_setting(zone_id, "always_use_https", always_https_api_value):
+            changed = True
+
+    min_tls_version = module.params["min_tls_version"]
+    if min_tls_version is not None:
+        if cf_api.ensure_zone_setting(zone_id, "min_tls_version", min_tls_version):
+            changed = True
+
+    return changed
 
 
 def main() -> None:
@@ -341,7 +444,16 @@ def main() -> None:
             },
             "account_email": {"type": "str"},
             "account_api_key": {"type": "str", "no_log": True},
-            "timeout": {"type": "int", "default": 30},
+            "universal_ssl": {"type": "bool"},
+            "ssl_mode": {
+                "type": "str",
+                "choices": ["off", "flexible", "full", "strict", "origin_pull"],
+            },
+            "always_https": {"type": "bool"},
+            "min_tls_version": {
+                "type": "str",
+                "choices": ["1.0", "1.1", "1.2", "1.3"],
+            },
         },
         required_together=[
             ("account_email", "account_api_key"),
@@ -352,6 +464,9 @@ def main() -> None:
         supports_check_mode=True,
     )
 
+    if not HAS_CLOUDFLARE:
+        module.fail_json(msg="The 'python3-cloudflare' package is required")
+
     name = module.params["name"]
     account_name = module.params["account_name"]
     state = module.params["state"]
@@ -359,34 +474,36 @@ def main() -> None:
     cf_api = CloudflareAPI(module)
 
     if state == "present":
+        changed = False
         zone = cf_api.get_zone(name)
-        if zone:
-            module.exit_json(
-                changed=False,
-                zone=zone,
-            )
 
-        if module.check_mode:
-            module.exit_json(
-                changed=True,
-                zone={},
-            )
+        if not zone:
+            if module.check_mode:
+                module.exit_json(
+                    changed=True,
+                    zone={},
+                )
 
-        account = cf_api.get_account(account_name)
-        if not account:
-            module.fail_json(
-                msg=f"Account '{account_name}' not found"
-            )
-            return
+            account = cf_api.get_account(account_name)
+            if not account:
+                module.fail_json(
+                    msg=f"Account '{account_name}' not found"
+                )
+                return
 
-        zone = cf_api.create_zone(
-            name,
-            account["id"],
-            jump_start=module.params["jump_start"],
-            zone_type=module.params["type"],
-        )
+            zone = cf_api.create_zone(
+                name,
+                account["id"],
+                jump_start=module.params["jump_start"],
+                zone_type=module.params["type"],
+            )
+            changed = True
+
+        if _ensure_zone_settings(module, cf_api, zone["id"]):
+            changed = True
+
         module.exit_json(
-            changed=True,
+            changed=changed,
             zone=zone,
         )
 
