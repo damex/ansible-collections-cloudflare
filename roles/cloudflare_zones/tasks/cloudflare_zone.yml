@@ -9,3 +9,7 @@
     state: "{{ cloudflare_zone_state }}"
     jump_start: "{{ cloudflare_zone_jump_start }}"
     type: "{{ cloudflare_zone_type }}"
+    universal_ssl: "{{ cloudflare_zone_universal_ssl }}"
+    ssl_mode: "{{ cloudflare_zone_ssl_mode }}"
+    always_https: "{{ cloudflare_zone_always_https }}"
+    min_tls_version: "{{ cloudflare_zone_min_tls_version }}"

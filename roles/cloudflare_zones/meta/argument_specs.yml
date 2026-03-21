@@ -44,6 +44,29 @@ argument_specs:
       cloudflare_zones_default_type:
         description: Default zone type.
         type: str
+      cloudflare_zones_universal_ssl:
+        description: Universal SSL.
+        type: bool
+      cloudflare_zones_ssl_mode:
+        description: SSL mode.
+        type: str
+        choices:
+          - "off"
+          - flexible
+          - full
+          - strict
+          - origin_pull
+      cloudflare_zones_always_https:
+        description: Always HTTPS redirect.
+        type: bool
+      cloudflare_zones_min_tls_version:
+        description: Minimum TLS version.
+        type: str
+        choices:
+          - "1.0"
+          - "1.1"
+          - "1.2"
+          - "1.3"
       cloudflare_zones:
         description: Zones to ensure.
         required: true
@@ -78,3 +101,26 @@ argument_specs:
           type:
             description: Zone type.
             type: str
+          universal_ssl:
+            description: Universal SSL.
+            type: bool
+          ssl_mode:
+            description: SSL mode.
+            type: str
+            choices:
+              - "off"
+              - flexible
+              - full
+              - strict
+              - origin_pull
+          always_https:
+            description: Always HTTPS redirect.
+            type: bool
+          min_tls_version:
+            description: Minimum TLS version.
+            type: str
+            choices:
+              - "1.0"
+              - "1.1"
+              - "1.2"
+              - "1.3"
