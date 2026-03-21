@@ -1,64 +1,103 @@
 ---
 argument_specs:
   main:
+    short_description: Ensure Cloudflare ACME.
+    description:
+      - Ensure Cloudflare ACME certificates using Let's Encrypt DNS challenge.
+    examples: |
+      - name: Ensure cloudflare acme
+        hosts: all
+        tasks:
+          - name: Ensure cloudflare acme
+            ansible.builtin.import_role:
+              name: damex.cloudflare.cloudflare_acme
+            vars:
+              cloudflare_acme_account_email: user@example.com
+              cloudflare_acme_certificate_directory: /etc/ssl/acme
+              cloudflare_acme_cloudflare_api_token: "{{ cloudflare_api_token }}"
+              cloudflare_acme_zones:
+                - name: example.com
+                  domains:
+                    - name: example.com
+                      names:
+                        - www.example.com
     options:
       cloudflare_acme_terms_agreed:
+        description: ACME terms of service agreement.
         type: bool
       cloudflare_acme_api_version:
+        description: ACME protocol version.
         type: int
       cloudflare_acme_directory_url:
+        description: ACME directory URL.
         type: str
       cloudflare_acme_account_email:
+        description: ACME account email.
         type: str
       cloudflare_acme_cloudflare_account_email:
+        description: Cloudflare account email.
         type: str
       cloudflare_acme_cloudflare_account_api_key:
+        description: Cloudflare account API key.
         type: str
-        no_log: true
       cloudflare_acme_cloudflare_api_token:
+        description: Cloudflare API token.
         type: str
-        no_log: true
       cloudflare_acme_challenge_retries:
+        description: ACME challenge retries.
         type: int
       cloudflare_acme_certificate_remaining_days:
+        description: Minimum certificate remaining days before renewal.
         type: int
       cloudflare_acme_deactivate_authzs:
+        description: ACME authorization deactivation after challenge.
         type: bool
       cloudflare_acme_account_key_file:
+        description: ACME account key file.
         type: path
       cloudflare_acme_account_key_passphrase:
+        description: ACME account key passphrase.
         type: str
-        no_log: true
       cloudflare_acme_certificate_directory:
-        type: str
+        description: Certificate directory.
         required: true
+        type: str
       cloudflare_acme_user:
+        description: Certificate file owner.
         type: str
       cloudflare_acme_zones:
-        type: list
+        description: Zones to issue certificates for.
         required: true
+        type: list
         elements: dict
         options:
           name:
+            description: Zone domain name.
             required: true
             type: str
           cloudflare_account_email:
+            description: Cloudflare account email.
             type: str
           cloudflare_account_api_key:
+            description: Cloudflare account API key.
             type: str
-            no_log: true
           cloudflare_api_token:
+            description: Cloudflare API token.
             type: str
-            no_log: true
           domains:
-            type: list
+            description: Certificate domains.
             required: true
+            type: list
             elements: dict
             options:
               name:
+                description: Primary domain name.
                 required: true
                 type: str
               names:
+                description: Subject alternative names.
                 type: list
+                elements: str
               deactivate_authzs:
+                description: ACME authorization deactivation after challenge.
                 type: bool

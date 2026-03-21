@@ -1,106 +1,157 @@
 ---
 argument_specs:
   main:
+    short_description: Ensure Cloudflare DNS.
+    description:
+      - Ensure Cloudflare DNS records.
+    examples: |
+      - name: Ensure cloudflare dns
+        hosts: all
+        tasks:
+          - name: Ensure cloudflare dns
+            ansible.builtin.import_role:
+              name: damex.cloudflare.cloudflare_dns
+            vars:
+              cloudflare_dns_api_token: "{{ cloudflare_api_token }}"
+              cloudflare_dns_zones:
+                - name: example.com
+                  a_records:
+                    - name: www
+                      value: 192.0.2.1
+                  mx_records:
+                    - name: example.com
+                      value: mail.example.com
+                      priority: 10
     options:
       cloudflare_dns_account_email:
+        description: Cloudflare account email.
         type: str
       cloudflare_dns_account_api_key:
+        description: Cloudflare account API key.
         type: str
-        no_log: true
       cloudflare_dns_api_token:
+        description: Cloudflare API token.
         type: str
-        no_log: true
       cloudflare_dns_default_record_proxied:
+        description: Default record proxied state.
         type: bool
       cloudflare_dns_default_record_state:
+        description: Default record state.
         type: str
         choices:
           - absent
           - present
       cloudflare_dns_default_record_ttl:
+        description: Default record TTL.
         type: int
       cloudflare_dns_zones:
-        type: list
+        description: Zones to manage DNS records for.
         required: true
+        type: list
         elements: dict
         options:
           name:
+            description: Zone domain name.
             required: true
             type: str
           account_email:
+            description: Cloudflare account email.
             type: str
           account_api_key:
+            description: Cloudflare account API key.
             type: str
-            no_log: true
           api_token:
+            description: Cloudflare API token.
             type: str
-            no_log: true
           mx_records:
+            description: MX records.
             type: list
             elements: dict
             options:
               name:
+                description: Record name.
                 required: true
                 type: str
               priority:
+                description: MX priority.
                 type: int
               value:
+                description: Mail server hostname.
                 type: str
               ttl:
+                description: TTL in seconds.
                 type: int
               state:
+                description: Record state.
                 type: str
                 choices:
                   - absent
                   - present
           a_records:
+            description: A records.
             type: list
             elements: dict
             options:
               name:
+                description: Record name.
                 required: true
                 type: str
               value:
+                description: IPv4 address.
                 type: str
               ttl:
+                description: TTL in seconds.
                 type: int
               proxied:
+                description: Cloudflare proxy.
                 type: bool
               state:
+                description: Record state.
                 type: str
                 choices:
                   - absent
                   - present
           cname_records:
+            description: CNAME records.
             type: list
             elements: dict
             options:
               name:
+                description: Record name.
                 required: true
                 type: str
               value:
+                description: Target hostname.
                 type: str
               ttl:
+                description: TTL in seconds.
                 type: int
               proxied:
+                description: Cloudflare proxy.
                 type: bool
               state:
+                description: Record state.
                 type: str
                 choices:
                   - absent
                   - present
           txt_records:
+            description: TXT records.
             type: list
             elements: dict
             options:
               name:
+                description: Record name.
                 required: true
                 type: str
               value:
+                description: TXT content.
                 type: str
               ttl:
+                description: TTL in seconds.
                 type: int
               state:
+                description: Record state.
                 type: str
                 choices:
                   - absent

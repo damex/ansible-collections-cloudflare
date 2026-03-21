@@ -1,51 +1,80 @@
 ---
 argument_specs:
   main:
+    short_description: Ensure Cloudflare zones.
+    description:
+      - Ensure Cloudflare zones.
+    examples: |
+      - name: Ensure cloudflare zones
+        hosts: all
+        tasks:
+          - name: Ensure cloudflare zones
+            ansible.builtin.import_role:
+              name: damex.cloudflare.cloudflare_zones
+            vars:
+              cloudflare_zones_account_name: my-account
+              cloudflare_zones_api_token: "{{ cloudflare_api_token }}"
+              cloudflare_zones:
+                - name: example.com
+                - name: example.org
+                  state: absent
     options:
       cloudflare_zones_account_name:
+        description: Cloudflare account name.
         required: true
         type: str
       cloudflare_zones_account_email:
+        description: Cloudflare account email.
         type: str
       cloudflare_zones_account_api_key:
+        description: Cloudflare account API key.
         type: str
-        no_log: true
       cloudflare_zones_api_token:
+        description: Cloudflare API token.
         type: str
-        no_log: true
       cloudflare_zones_default_state:
+        description: Default zone state.
         type: str
         choices:
           - absent
           - present
       cloudflare_zones_default_jump_start:
+        description: Default zone jump start.
         type: bool
       cloudflare_zones_default_type:
+        description: Default zone type.
         type: str
       cloudflare_zones:
-        type: list
+        description: Zones to ensure.
         required: true
+        type: list
         elements: dict
         options:
           name:
+            description: Zone domain name.
             required: true
             type: str
           account_name:
+            description: Cloudflare account name.
             type: str
           account_email:
+            description: Cloudflare account email.
             type: str
           account_api_key:
+            description: Cloudflare account API key.
             type: str
-            no_log: true
           api_token:
+            description: Cloudflare API token.
             type: str
-            no_log: true
           state:
+            description: Zone state.
             type: str
             choices:
               - absent
               - present
           jump_start:
+            description: Zone jump start.
             type: bool
           type:
+            description: Zone type.
             type: str
