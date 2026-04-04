@@ -1,0 +1,8 @@
+---
+- name: Ensure cloudflare R2 buckets
+  tags:
+    - cloudflare
+    - cloudflare_r2_buckets
+  block:
+    - name: Ensure cloudflare R2 buckets
+      ansible.builtin.import_tasks: cloudflare_r2_buckets.yml

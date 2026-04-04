@@ -1,0 +1,12 @@
+---
+- name: Ensure cloudflare R2 bucket {{ cloudflare_r2_bucket_name }}
+  damex.cloudflare.cloudflare_r2_bucket:
+    name: "{{ cloudflare_r2_bucket_name }}"
+    account_id: "{{ cloudflare_r2_bucket_account_id }}"
+    account_name: "{{ cloudflare_r2_bucket_account_name }}"
+    account_email: "{{ cloudflare_r2_bucket_account_email }}"
+    account_api_key: "{{ cloudflare_r2_bucket_account_api_key }}"
+    api_token: "{{ cloudflare_r2_bucket_api_token }}"
+    state: "{{ cloudflare_r2_bucket_state }}"
+    location_hint: "{{ cloudflare_r2_bucket_location_hint }}"
+    storage_class: "{{ cloudflare_r2_bucket_storage_class }}"
