@@ -8,15 +8,11 @@ Unit tests for the cloudflare_zone module.
 
 from __future__ import annotations
 
-import json
 import os
-from collections.abc import Generator
-from contextlib import contextmanager
 from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare_client import (
     CloudflareClientException,
@@ -29,6 +25,9 @@ from ansible_collections.damex.cloudflare.tests.unit.plugins.modules.conftest im
     UNIVERSAL_SSL_DISABLED,
     UNIVERSAL_SSL_ENABLED,
     ZONE,
+    AnsibleExitJson,
+    AnsibleFailJson,
+    set_module_args,
 )
 
 __all__ = [
@@ -57,108 +56,6 @@ __all__ = [
     'test_present_min_tls_version_no_change',
     'test_present_settings_check_mode',
 ]
-
-
-class AnsibleExitJson(Exception):
-    """
-    Raised by mocked exit_json.
-
-    >>> raise AnsibleExitJson({'changed': False})
-    Traceback (most recent call last):
-        ...
-    test_cloudflare_zone.AnsibleExitJson: {'changed': False}
-    """
-
-    def __init__(self, result: dict[str, Any]) -> None:
-        """
-        Store result for assertion.
-
-        >>> AnsibleExitJson({'changed': False}).result
-        {'changed': False}
-        """
-        super().__init__(result)
-        self.result = result
-
-
-class AnsibleFailJson(Exception):
-    """
-    Raised by mocked fail_json.
-
-    >>> raise AnsibleFailJson({'msg': 'error'})
-    Traceback (most recent call last):
-        ...
-    test_cloudflare_zone.AnsibleFailJson: {'msg': 'error'}
-    """
-
-    def __init__(self, result: dict[str, Any]) -> None:
-        """
-        Store result for assertion.
-
-        >>> AnsibleFailJson({'msg': 'error'}).result
-        {'msg': 'error'}
-        """
-        super().__init__(result)
-        self.result = result
-
-
-def _raise_exit_json(
-    module_instance: AnsibleModule,
-    changed: bool = False,
-    zone: dict[str, Any] | None = None,
-) -> None:
-    """
-    Raise AnsibleExitJson with the result fields.
-
-    >>> _raise_exit_json(module_instance, changed=False, zone={'name': 'example.com'})
-    Traceback (most recent call last):
-        ...
-    test_cloudflare_zone.AnsibleExitJson: ...
-    """
-    raise AnsibleExitJson({'changed': changed, 'zone': zone})
-
-
-def _raise_fail_json(
-    module_instance: AnsibleModule,
-    msg: str = '',
-) -> None:
-    """
-    Raise AnsibleFailJson with the error message.
-
-    >>> _raise_fail_json(module_instance, msg='not found')
-    Traceback (most recent call last):
-        ...
-    test_cloudflare_zone.AnsibleFailJson: {'msg': 'not found'}
-    """
-    raise AnsibleFailJson({'msg': msg})
-
-
-@contextmanager
-def set_module_args(args: dict[str, Any]) -> Generator[None, None, None]:
-    """
-    Set module arguments and patch AnsibleModule for testing.
-
-    >>> with set_module_args({'name': 'example.com', 'api_token': 't'}):
-    ...     pass
-    """
-    args.setdefault('_ansible_remote_tmp', '/tmp')
-    args.setdefault('_ansible_keep_remote_files', False)
-    serialized = json.dumps({'ANSIBLE_MODULE_ARGS': args}).encode()
-    with (
-        patch(
-            'ansible.module_utils.basic._ANSIBLE_ARGS',
-            serialized,
-        ),
-        patch(
-            'ansible.module_utils.basic._ANSIBLE_PROFILE',
-            'legacy',
-        ),
-        patch.multiple(
-            AnsibleModule,
-            exit_json=_raise_exit_json,
-            fail_json=_raise_fail_json,
-        ),
-    ):
-        yield
 
 
 ARGS: dict[str, str] = {
