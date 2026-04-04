@@ -5,7 +5,6 @@ explicit_package_bases = true
 [[tool.mypy.overrides]]
 module = [
     "ansible.module_utils.basic",
-    "CloudFlare",
-    "CloudFlare.exceptions",
+    "ansible.module_utils.urls",
 ]
 ignore_missing_imports = true
