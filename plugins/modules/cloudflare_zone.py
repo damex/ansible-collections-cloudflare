@@ -19,6 +19,8 @@ author:
 short_description: Ensure Cloudflare zones
 description:
   - 'Ensures Cloudflare zones using the Cloudflare API, see the docs: U(https://api.cloudflare.com/).'
+extends_documentation_fragment:
+  - damex.cloudflare.common
 attributes:
   check_mode:
     support: full
@@ -59,22 +61,6 @@ options:
       - partial
       - secondary
     default: full
-  api_token:
-    description:
-      - Cloudflare API token.
-      - Required if O(account_email) and O(account_api_key) are not provided.
-      - Can be specified in E(CLOUDFLARE_TOKEN) environment variable.
-    type: str
-  account_email:
-    description:
-      - Cloudflare account email.
-      - Required together with O(account_api_key) if O(api_token) is not provided.
-    type: str
-  account_api_key:
-    description:
-      - Cloudflare account API key.
-      - Required together with O(account_email) if O(api_token) is not provided.
-    type: str
   universal_ssl:
     description:
       - Universal SSL.
