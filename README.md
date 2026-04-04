@@ -9,6 +9,7 @@ Ansible collection for [Cloudflare](https://www.cloudflare.com/).
 
 | Module | Description |
 |--------|-------------|
+| `cloudflare_r2_bucket` | Ensure Cloudflare R2 bucket |
 | `cloudflare_zone` | Ensure Cloudflare zone |
 
 ## Roles
@@ -17,12 +18,12 @@ Ansible collection for [Cloudflare](https://www.cloudflare.com/).
 |------|-------------|
 | `cloudflare_acme` | Ensure Cloudflare ACME |
 | `cloudflare_dns` | Ensure Cloudflare DNS |
+| `cloudflare_r2_buckets` | Ensure Cloudflare R2 buckets |
 | `cloudflare_zones` | Ensure Cloudflare zones |
 
 ## Requirements
 
 - Ansible core >= 2.19.0
-- python3-cloudflare >= 2.11.1
 - Debian or Fedora or Red Hat Enterprise Linux derivatives
 
 ## Installation
