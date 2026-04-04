@@ -10,6 +10,9 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
+from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare import (
+    cloudflare_get_account,
+)
 from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare_client import (
     cloudflare_create_client,
 )
@@ -71,7 +74,7 @@ def test_get_account_found() -> None:
     """cloudflare_get_account returns the account dict when found."""
     client = mock_cloudflare_client()
     client.get.return_value = {'result': [ACCOUNT]}
-    result = cloudflare_zone.cloudflare_get_account(client, 'my-account')
+    result = cloudflare_get_account(client, 'my-account')
     assert result is not None
     assert result['id'] == 'acct-id-456'
     client.get.assert_called_once_with(
@@ -84,7 +87,7 @@ def test_get_account_not_found() -> None:
     """cloudflare_get_account returns None when the account does not exist."""
     client = mock_cloudflare_client()
     client.get.return_value = {'result': []}
-    result = cloudflare_zone.cloudflare_get_account(client, 'missing')
+    result = cloudflare_get_account(client, 'missing')
     assert result is None
 
 
