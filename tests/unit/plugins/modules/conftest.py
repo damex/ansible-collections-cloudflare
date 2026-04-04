@@ -1,0 +1,71 @@
+# Copyright (c) 2026 Roman Kuzmitskii <ansible@damex.org>
+# GNU General Public License v3.0+ (https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+"""
+Shared fixtures and constants for cloudflare module unit tests.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Generator
+from typing import Any
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+__all__ = [
+    'ZONE',
+    'ACCOUNT',
+    'UNIVERSAL_SSL_ENABLED',
+    'UNIVERSAL_SSL_DISABLED',
+    'CLOUDFLARE_ZONE_MODULE',
+    'mock_cloudflare_client',
+    'cloudflare_mock',
+]
+
+ZONE: dict[str, Any] = {
+    'id': 'zone-id-123',
+    'name': 'example.com',
+    'status': 'active',
+    'type': 'full',
+    'account': {'id': 'acct-id-456', 'name': 'my-account'},
+}
+
+ACCOUNT: dict[str, str] = {'id': 'acct-id-456', 'name': 'my-account'}
+
+UNIVERSAL_SSL_ENABLED: dict[str, bool] = {'enabled': True}
+UNIVERSAL_SSL_DISABLED: dict[str, bool] = {'enabled': False}
+
+CLOUDFLARE_ZONE_MODULE = (
+    'ansible_collections.damex.cloudflare.plugins.modules.cloudflare_zone'
+)
+
+
+def mock_cloudflare_client() -> MagicMock:
+    """
+    Create mock CloudflareClient with context manager support.
+
+    >>> mock_cloudflare_client()
+    <MagicMock ...>
+    """
+    client = MagicMock()
+    client.__enter__ = MagicMock(return_value=client)
+    client.__exit__ = MagicMock(return_value=False)
+    return client
+
+
+@pytest.fixture
+def cloudflare_mock() -> Generator[MagicMock, None, None]:
+    """
+    Patch cloudflare_create_client for the test duration.
+
+    >>> type(next(cloudflare_mock()))
+    <class 'unittest.mock.MagicMock'>
+    """
+    client = mock_cloudflare_client()
+    with patch(
+        f'{CLOUDFLARE_ZONE_MODULE}.cloudflare_create_client',
+        return_value=client,
+    ):
+        yield client
