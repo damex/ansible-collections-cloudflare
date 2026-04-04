@@ -188,6 +188,7 @@ from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare_client
 from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare import (
     cloudflare_create_client,
     cloudflare_create_write_module,
+    cloudflare_get_account,
     cloudflare_run_write_module,
 )
 
@@ -208,24 +209,6 @@ def cloudflare_get_zone(
     )
     zones = response.get('result', [])
     return next(iter(zones), None)
-
-
-def cloudflare_get_account(
-    client: CloudflareClient,
-    name: str,
-) -> dict[str, Any] | None:
-    """
-    Look up an account by name.
-
-    >>> cloudflare_get_account(client, 'my account')
-    {'id': '...', 'name': 'my account'}
-    """
-    response = client.get(
-        '/accounts',
-        params={'name': name},
-    )
-    accounts = response.get('result', [])
-    return next(iter(accounts), None)
 
 
 def cloudflare_create_zone(
