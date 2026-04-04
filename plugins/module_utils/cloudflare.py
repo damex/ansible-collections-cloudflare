@@ -13,6 +13,7 @@ from typing import Any
 
 from ansible.module_utils.basic import AnsibleModule, env_fallback
 from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare_client import (
+    CloudflareClient,
     CloudflareClientException,
     cloudflare_create_client,
 )
@@ -23,6 +24,8 @@ __all__ = [
     'CLOUDFLARE_COMMON_REQUIRED_TOGETHER',
     'cloudflare_create_client',
     'cloudflare_create_write_module',
+    'cloudflare_get_account',
+    'cloudflare_resolve_account_id',
     'cloudflare_run_write_module',
 ]
 
@@ -45,8 +48,54 @@ CLOUDFLARE_COMMON_REQUIRED_ONE_OF: list[list[str]] = [
 ]
 
 
+def cloudflare_get_account(
+    client: CloudflareClient,
+    name: str,
+) -> dict[str, Any] | None:
+    """
+    Look up an account by name.
+
+    >>> cloudflare_get_account(client, 'my account')
+    {'id': '...', 'name': 'my account'}
+    """
+    response = client.get(
+        '/accounts',
+        params={'name': name},
+    )
+    accounts = response.get('result', [])
+    return next(iter(accounts), None)
+
+
+def cloudflare_resolve_account_id(
+    client: CloudflareClient,
+    account_id: str | None,
+    account_name: str | None,
+) -> str:
+    """
+    Resolve account identifier from account_id or account_name.
+
+    >>> cloudflare_resolve_account_id(client, 'acct-123', None)
+    'acct-123'
+    """
+    if account_id:
+        return account_id
+    if not account_name:
+        raise CloudflareClientException(
+            'either account_id or account_name is required'
+        )
+    account = cloudflare_get_account(client, account_name)
+    if not account:
+        raise CloudflareClientException(
+            f"account '{account_name}' not found"
+        )
+    resolved_account_id: str = account['id']
+    return resolved_account_id
+
+
 def cloudflare_create_write_module(
     argument_spec: dict[str, Any],
+    required_one_of: list[list[str]] | None = None,
+    mutually_exclusive: list[list[str]] | None = None,
 ) -> AnsibleModule:
     """
     Create write module with common Cloudflare arguments.
@@ -57,11 +106,15 @@ def cloudflare_create_write_module(
     full_spec = argument_spec.copy()
     for spec_key, spec_value in CLOUDFLARE_COMMON_ARGS.items():
         full_spec[spec_key] = spec_value
+    combined_required_one_of = list(CLOUDFLARE_COMMON_REQUIRED_ONE_OF)
+    if required_one_of:
+        combined_required_one_of.extend(required_one_of)
     return AnsibleModule(
         argument_spec=full_spec,
         supports_check_mode=True,
         required_together=CLOUDFLARE_COMMON_REQUIRED_TOGETHER,
-        required_one_of=CLOUDFLARE_COMMON_REQUIRED_ONE_OF,
+        required_one_of=combined_required_one_of,
+        mutually_exclusive=mutually_exclusive or [],
     )
 
 
