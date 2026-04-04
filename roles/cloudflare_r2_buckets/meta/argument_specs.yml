@@ -1,0 +1,108 @@
+---
+argument_specs:
+  main:
+    short_description: Ensure Cloudflare R2 buckets.
+    description:
+      - Ensure Cloudflare R2 object storage buckets.
+    examples: |
+      - name: Ensure cloudflare R2 buckets
+        hosts: all
+        tasks:
+          - name: Ensure cloudflare R2 buckets
+            ansible.builtin.import_role:
+              name: damex.cloudflare.cloudflare_r2_buckets
+            vars:
+              cloudflare_r2_buckets_account_id: 023e105f4ecef8ad9ca31a8372d0c353
+              cloudflare_r2_buckets_api_token: "{{ cloudflare_api_token }}"
+              cloudflare_r2_buckets:
+                - name: backups
+                  location_hint: weur
+                - name: media
+                  storage_class: InfrequentAccess
+                - name: old-bucket
+                  state: absent
+    options:
+      cloudflare_r2_buckets_account_id:
+        description: Cloudflare account identifier.
+        type: str
+      cloudflare_r2_buckets_account_name:
+        description: Cloudflare account name.
+        type: str
+      cloudflare_r2_buckets_account_email:
+        description: Cloudflare account email.
+        type: str
+      cloudflare_r2_buckets_account_api_key:
+        description: Cloudflare account API key.
+        type: str
+      cloudflare_r2_buckets_api_token:
+        description: Cloudflare API token.
+        type: str
+      cloudflare_r2_buckets_default_state:
+        description: Default bucket state.
+        type: str
+        choices:
+          - absent
+          - present
+      cloudflare_r2_buckets_default_storage_class:
+        description: Default storage class.
+        type: str
+        choices:
+          - Standard
+          - InfrequentAccess
+      cloudflare_r2_buckets_default_location_hint:
+        description: Default bucket location hint.
+        type: str
+        choices:
+          - apac
+          - eeur
+          - enam
+          - weur
+          - wnam
+          - oc
+      cloudflare_r2_buckets:
+        description: R2 buckets to ensure.
+        required: true
+        type: list
+        elements: dict
+        options:
+          name:
+            description: Bucket name.
+            required: true
+            type: str
+          account_id:
+            description: Cloudflare account identifier.
+            type: str
+          account_name:
+            description: Cloudflare account name.
+            type: str
+          account_email:
+            description: Cloudflare account email.
+            type: str
+          account_api_key:
+            description: Cloudflare account API key.
+            type: str
+          api_token:
+            description: Cloudflare API token.
+            type: str
+          state:
+            description: Bucket state.
+            type: str
+            choices:
+              - absent
+              - present
+          location_hint:
+            description: Bucket location hint.
+            type: str
+            choices:
+              - apac
+              - eeur
+              - enam
+              - weur
+              - wnam
+              - oc
+          storage_class:
+            description: Default storage class.
+            type: str
+            choices:
+              - Standard
+              - InfrequentAccess
