@@ -22,7 +22,6 @@ Ansible collection for [Cloudflare](https://www.cloudflare.com/).
 | Role | Description |
 |------|-------------|
 | `cloudflare_acme` | Ensure Cloudflare ACME |
-| `cloudflare_dns` | Ensure Cloudflare DNS (legacy) |
 | `cloudflare_dns_records` | Ensure Cloudflare DNS records |
 | `cloudflare_email_routing` | Ensure Cloudflare email routing |
 | `cloudflare_r2_buckets` | Ensure Cloudflare R2 buckets |
