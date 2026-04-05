@@ -1,0 +1,10 @@
+---
+- name: Ensure cloudflare email routing destination address {{ cloudflare_email_routing_destination_address }}
+  damex.cloudflare.cloudflare_email_routing_address:
+    email: "{{ cloudflare_email_routing_destination_address }}"
+    account_id: "{{ cloudflare_email_routing_account_id | default(omit) }}"
+    account_name: "{{ cloudflare_email_routing_account_name | default(omit) }}"
+    account_email: "{{ cloudflare_email_routing_account_email | default(omit) }}"
+    account_api_key: "{{ cloudflare_email_routing_account_api_key | default(omit) }}"
+    api_token: "{{ cloudflare_email_routing_api_token | default(omit) }}"
+    state: present

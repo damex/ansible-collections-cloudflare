@@ -1,0 +1,7 @@
+---
+- name: Ensure cloudflare email routing destination addresses
+  ansible.builtin.include_tasks: cloudflare_email_routing_address.yml
+  loop: "{{ cloudflare_email_routing_destination_addresses }}"
+  loop_control:
+    label: "{{ cloudflare_email_routing_destination_address }}"
+    loop_var: cloudflare_email_routing_destination_address

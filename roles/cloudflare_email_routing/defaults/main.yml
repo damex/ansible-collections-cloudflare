@@ -1,0 +1,4 @@
+---
+cloudflare_email_routing_enabled: true
+cloudflare_email_routing_default_rule_state: present
+cloudflare_email_routing_default_rule_enabled: true
