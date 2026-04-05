@@ -1,0 +1,8 @@
+---
+- name: Ensure cloudflare DNS records
+  tags:
+    - cloudflare
+    - cloudflare_dns_records
+  block:
+    - name: Ensure cloudflare DNS records
+      ansible.builtin.import_tasks: cloudflare_dns_records_zones.yml

@@ -1,0 +1,7 @@
+---
+- name: Ensure cloudflare DNS records
+  ansible.builtin.include_tasks: cloudflare_dns_record.yml
+  loop: "{{ cloudflare_dns_records_zone_records }}"
+  loop_control:
+    label: "{{ cloudflare_dns_record.record }} {{ cloudflare_dns_record.type }}"
+    loop_var: cloudflare_dns_record
