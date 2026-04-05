@@ -31,8 +31,13 @@ __all__ = [
     'email_routing_mock',
     'address_mock',
     'rule_mock',
+    'dns_mock',
     'set_module_args',
 ]
+
+CLOUDFLARE_DNS_RECORD_MODULE = (
+    'ansible_collections.damex.cloudflare.plugins.modules.cloudflare_dns_record'
+)
 
 CLOUDFLARE_R2_MODULE = (
     'ansible_collections.damex.cloudflare.plugins.modules.cloudflare_r2_bucket'
@@ -264,6 +269,22 @@ def rule_mock() -> Generator[MagicMock, None, None]:
     client = mock_cloudflare_client()
     with patch(
         f'{CLOUDFLARE_EMAIL_RULE_MODULE}.cloudflare_create_client',
+        return_value=client,
+    ):
+        yield client
+
+
+@pytest.fixture
+def dns_mock() -> Generator[MagicMock, None, None]:
+    """
+    Patch cloudflare_create_client for DNS record tests.
+
+    >>> type(next(dns_mock()))
+    <class 'unittest.mock.MagicMock'>
+    """
+    client = mock_cloudflare_client()
+    with patch(
+        f'{CLOUDFLARE_DNS_RECORD_MODULE}.cloudflare_create_client',
         return_value=client,
     ):
         yield client
