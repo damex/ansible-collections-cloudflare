@@ -15,6 +15,8 @@ Ansible collection for [Cloudflare](https://www.cloudflare.com/).
 | `cloudflare_dns_record` | Ensure Cloudflare DNS record |
 | `cloudflare_dns_records` | Ensure Cloudflare DNS records for a zone (batch) |
 | `cloudflare_r2_bucket` | Ensure Cloudflare R2 bucket |
+| `cloudflare_tunnel` | Ensure Cloudflare tunnel |
+| `cloudflare_tunnel_facts` | Ensure Cloudflare tunnel facts are gathered |
 | `cloudflare_zone` | Ensure Cloudflare zone |
 
 ## Roles
@@ -25,6 +27,7 @@ Ansible collection for [Cloudflare](https://www.cloudflare.com/).
 | `cloudflare_dns_records` | Ensure Cloudflare DNS records |
 | `cloudflare_email_routing` | Ensure Cloudflare email routing |
 | `cloudflare_r2_buckets` | Ensure Cloudflare R2 buckets |
+| `cloudflare_tunnels` | Ensure Cloudflare tunnels |
 | `cloudflare_zones` | Ensure Cloudflare zones |
 
 ## Requirements
