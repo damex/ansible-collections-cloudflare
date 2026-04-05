@@ -23,11 +23,13 @@ __all__ = [
     'CLOUDFLARE_COMMON_REQUIRED_ONE_OF',
     'CLOUDFLARE_COMMON_REQUIRED_TOGETHER',
     'cloudflare_create_client',
+    'cloudflare_create_info_module',
     'cloudflare_create_write_module',
     'cloudflare_get_account',
     'cloudflare_get_zone',
     'cloudflare_resolve_account_id',
     'cloudflare_resolve_zone_id',
+    'cloudflare_run_info_module',
     'cloudflare_run_write_module',
 ]
 
@@ -172,6 +174,47 @@ def cloudflare_run_write_module(
     Execute write module with exception handling.
 
     >>> cloudflare_run_write_module(module, implementation)
+    """
+    try:
+        implementation()
+    except CloudflareClientException as exception:
+        module.fail_json(msg=str(exception))
+
+
+def cloudflare_create_info_module(
+    argument_spec: dict[str, Any],
+    required_one_of: list[list[str]] | None = None,
+    mutually_exclusive: list[list[str]] | None = None,
+) -> AnsibleModule:
+    """
+    Create info module with common Cloudflare arguments.
+
+    >>> cloudflare_create_info_module({'name': {'type': 'str'}})
+    <AnsibleModule ...>
+    """
+    full_spec = argument_spec.copy()
+    for spec_key, spec_value in CLOUDFLARE_COMMON_ARGS.items():
+        full_spec[spec_key] = spec_value
+    combined_required_one_of = list(CLOUDFLARE_COMMON_REQUIRED_ONE_OF)
+    if required_one_of:
+        combined_required_one_of.extend(required_one_of)
+    return AnsibleModule(
+        argument_spec=full_spec,
+        supports_check_mode=True,
+        required_together=CLOUDFLARE_COMMON_REQUIRED_TOGETHER,
+        required_one_of=combined_required_one_of,
+        mutually_exclusive=mutually_exclusive or [],
+    )
+
+
+def cloudflare_run_info_module(
+    module: AnsibleModule,
+    implementation: collections.abc.Callable[[], None],
+) -> None:
+    """
+    Execute info module with exception handling.
+
+    >>> cloudflare_run_info_module(module, implementation)
     """
     try:
         implementation()
