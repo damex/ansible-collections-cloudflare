@@ -1,7 +1,8 @@
 ---
-- name: Ensure cloudflare DNS records
-  ansible.builtin.include_tasks: cloudflare_dns_record.yml
-  loop: "{{ cloudflare_dns_records_zone_records }}"
-  loop_control:
-    label: "{{ cloudflare_dns_record.record }} {{ cloudflare_dns_record.type }}"
-    loop_var: cloudflare_dns_record
+- name: Ensure cloudflare DNS records for {{ cloudflare_dns_records_zone_name }}
+  damex.cloudflare.cloudflare_dns_records:
+    zone_name: "{{ cloudflare_dns_records_zone_name }}"
+    api_token: "{{ cloudflare_dns_records_zone_api_token }}"
+    account_email: "{{ cloudflare_dns_records_zone_account_email | default(omit) }}"
+    account_api_key: "{{ cloudflare_dns_records_zone_account_api_key | default(omit) }}"
+    records: "{{ cloudflare_dns_records_zone_records }}"
