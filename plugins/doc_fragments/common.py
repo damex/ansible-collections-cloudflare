@@ -51,6 +51,137 @@ options:
     type: str
 """
 
+    DNS_RECORD = r"""
+options:
+  record:
+    description:
+      - DNS record name (subdomain or @ for zone apex).
+    required: true
+    type: str
+  type:
+    description:
+      - DNS record type.
+    required: true
+    type: str
+    choices:
+      - A
+      - AAAA
+      - CAA
+      - CNAME
+      - DS
+      - HTTPS
+      - MX
+      - NAPTR
+      - NS
+      - PTR
+      - SMIMEA
+      - SRV
+      - SSHFP
+      - SVCB
+      - TLSA
+      - TXT
+      - URI
+  content:
+    description:
+      - DNS record content.
+      - Required when O(state) is C(present).
+    type: str
+  ttl:
+    description:
+      - DNS record TTL in seconds.
+      - Value of 1 means automatic.
+    type: int
+    default: 1
+  priority:
+    description:
+      - DNS record priority.
+      - Required for MX and URI records.
+    type: int
+  proxied:
+    description:
+      - Cloudflare proxy status.
+      - Only applicable to A, AAAA, and CNAME records.
+    type: bool
+    default: false
+  state:
+    description:
+      - DNS record state.
+    type: str
+    choices:
+      - absent
+      - present
+    default: present
+"""
+
+    DNS_RECORDS = r"""
+options:
+  records:
+    description:
+      - DNS records to ensure.
+    required: true
+    type: list
+    elements: dict
+    suboptions:
+      record:
+        description:
+          - DNS record name (subdomain or @ for zone apex).
+        required: true
+        type: str
+      type:
+        description:
+          - DNS record type.
+        required: true
+        type: str
+        choices:
+          - A
+          - AAAA
+          - CAA
+          - CNAME
+          - DS
+          - HTTPS
+          - MX
+          - NAPTR
+          - NS
+          - PTR
+          - SMIMEA
+          - SRV
+          - SSHFP
+          - SVCB
+          - TLSA
+          - TXT
+          - URI
+      content:
+        description:
+          - DNS record content.
+          - Required when O(records[].state) is C(present).
+        type: str
+      ttl:
+        description:
+          - DNS record TTL in seconds.
+          - Value of 1 means automatic.
+        type: int
+        default: 1
+      priority:
+        description:
+          - DNS record priority.
+          - Required for MX and URI records.
+        type: int
+      proxied:
+        description:
+          - Cloudflare proxy status.
+          - Only applicable to A, AAAA, and CNAME records.
+        type: bool
+        default: false
+      state:
+        description:
+          - DNS record state.
+        type: str
+        choices:
+          - absent
+          - present
+        default: present
+"""
+
     ZONE = r"""
 options:
   zone_id:

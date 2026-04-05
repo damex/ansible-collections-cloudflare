@@ -144,9 +144,10 @@ class CloudflareClient:
             try:
                 error_content = json.loads(error_body)
                 errors = error_content.get('errors', [])
-                if errors:
-                    error_code = errors[0].get('code', 0)
-                    error_message = errors[0].get('message', 'unknown error')
+                first_error = next(iter(errors), None)
+                if first_error:
+                    error_code = first_error.get('code', 0)
+                    error_message = first_error.get('message', 'unknown error')
                     if http_error.code == 404:
                         raise CloudflareNotFoundException(
                             f'API error {error_code}: {error_message}'
@@ -168,9 +169,10 @@ class CloudflareClient:
 
         if not content.get('success', False):
             errors = content.get('errors', [])
-            if errors:
-                error_code = errors[0].get('code', 0)
-                error_message = errors[0].get('message', 'unknown error')
+            first_error = next(iter(errors), None)
+            if first_error:
+                error_code = first_error.get('code', 0)
+                error_message = first_error.get('message', 'unknown error')
                 raise CloudflareClientException(
                     f'API error {error_code}: {error_message}'
                 )
