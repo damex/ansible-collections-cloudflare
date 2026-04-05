@@ -1,0 +1,4 @@
+---
+cloudflare_dns_records_default_state: present
+cloudflare_dns_records_default_proxied: false
+cloudflare_dns_records_default_ttl: 1

@@ -1,0 +1,119 @@
+---
+argument_specs:
+  main:
+    short_description: Ensure Cloudflare DNS records.
+    description:
+      - Ensure Cloudflare DNS records.
+    examples: |
+      - name: Ensure cloudflare DNS records
+        hosts: all
+        tasks:
+          - name: Ensure cloudflare DNS records
+            ansible.builtin.import_role:
+              name: damex.cloudflare.cloudflare_dns_records
+            vars:
+              cloudflare_dns_records_api_token: "{{ cloudflare_api_token }}"
+              cloudflare_dns_records_zones:
+                - name: example.com
+                  records:
+                    - record: www
+                      type: A
+                      content: 192.0.2.1
+                    - record: example.com
+                      type: MX
+                      content: mail.example.com
+                      priority: 10
+                    - record: example.com
+                      type: TXT
+                      content: "v=spf1 include:_spf.example.com ~all"
+    options:
+      cloudflare_dns_records_account_email:
+        description: Cloudflare account email.
+        type: str
+      cloudflare_dns_records_account_api_key:
+        description: Cloudflare account API key.
+        type: str
+      cloudflare_dns_records_api_token:
+        description: Cloudflare API token.
+        type: str
+      cloudflare_dns_records_default_state:
+        description: Default record state.
+        type: str
+        choices:
+          - absent
+          - present
+      cloudflare_dns_records_default_proxied:
+        description: Default Cloudflare proxy status.
+        type: bool
+      cloudflare_dns_records_default_ttl:
+        description: Default record TTL in seconds.
+        type: int
+      cloudflare_dns_records_zones:
+        description: Zones with DNS records to ensure.
+        required: true
+        type: list
+        elements: dict
+        options:
+          name:
+            description: Zone domain name.
+            required: true
+            type: str
+          account_email:
+            description: Cloudflare account email.
+            type: str
+          account_api_key:
+            description: Cloudflare account API key.
+            type: str
+          api_token:
+            description: Cloudflare API token.
+            type: str
+          records:
+            description: DNS records to ensure.
+            required: true
+            type: list
+            elements: dict
+            options:
+              record:
+                description: DNS record name (subdomain or @ for zone apex).
+                required: true
+                type: str
+              type:
+                description: DNS record type.
+                required: true
+                type: str
+                choices:
+                  - A
+                  - AAAA
+                  - CAA
+                  - CNAME
+                  - DS
+                  - HTTPS
+                  - MX
+                  - NAPTR
+                  - NS
+                  - PTR
+                  - SMIMEA
+                  - SRV
+                  - SSHFP
+                  - SVCB
+                  - TLSA
+                  - TXT
+                  - URI
+              content:
+                description: Record content.
+                type: str
+              ttl:
+                description: Record TTL in seconds.
+                type: int
+              priority:
+                description: Record priority.
+                type: int
+              proxied:
+                description: Cloudflare proxy status.
+                type: bool
+              state:
+                description: Record state.
+                type: str
+                choices:
+                  - absent
+                  - present
