@@ -32,16 +32,16 @@ argument_specs:
       cloudflare_zones_api_token:
         description: Cloudflare API token.
         type: str
-      cloudflare_zones_default_state:
+      cloudflare_zones_state:
         description: Default zone state.
         type: str
         choices:
           - absent
           - present
-      cloudflare_zones_default_jump_start:
+      cloudflare_zones_jump_start:
         description: Default zone jump start.
         type: bool
-      cloudflare_zones_default_type:
+      cloudflare_zones_type:
         description: Default zone type.
         type: str
       cloudflare_zones_universal_ssl:

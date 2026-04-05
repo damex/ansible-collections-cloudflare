@@ -37,19 +37,19 @@ argument_specs:
       cloudflare_r2_buckets_api_token:
         description: Cloudflare API token.
         type: str
-      cloudflare_r2_buckets_default_state:
+      cloudflare_r2_buckets_state:
         description: Default bucket state.
         type: str
         choices:
           - absent
           - present
-      cloudflare_r2_buckets_default_storage_class:
+      cloudflare_r2_buckets_storage_class:
         description: Default storage class.
         type: str
         choices:
           - Standard
           - InfrequentAccess
-      cloudflare_r2_buckets_default_location_hint:
+      cloudflare_r2_buckets_location_hint:
         description: Default bucket location hint.
         type: str
         choices:

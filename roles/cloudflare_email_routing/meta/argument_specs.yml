@@ -50,13 +50,13 @@ argument_specs:
       cloudflare_email_routing_enabled:
         description: Email routing enabled state.
         type: bool
-      cloudflare_email_routing_default_rule_state:
+      cloudflare_email_routing_rule_state:
         description: Default rule state.
         type: str
         choices:
           - absent
           - present
-      cloudflare_email_routing_default_rule_enabled:
+      cloudflare_email_routing_rule_enabled:
         description: Default rule enabled state.
         type: bool
       cloudflare_email_routing_destination_addresses:

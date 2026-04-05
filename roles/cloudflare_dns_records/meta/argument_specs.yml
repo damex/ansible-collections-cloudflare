@@ -36,16 +36,16 @@ argument_specs:
       cloudflare_dns_records_api_token:
         description: Cloudflare API token.
         type: str
-      cloudflare_dns_records_default_state:
+      cloudflare_dns_records_state:
         description: Default record state.
         type: str
         choices:
           - absent
           - present
-      cloudflare_dns_records_default_proxied:
+      cloudflare_dns_records_proxied:
         description: Default Cloudflare proxy status.
         type: bool
-      cloudflare_dns_records_default_ttl:
+      cloudflare_dns_records_ttl:
         description: Default record TTL in seconds.
         type: int
       cloudflare_dns_records_zones:

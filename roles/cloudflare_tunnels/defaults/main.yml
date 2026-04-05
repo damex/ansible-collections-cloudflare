@@ -1,2 +1,2 @@
 ---
-cloudflare_tunnels_default_state: present
+cloudflare_tunnels_state: present

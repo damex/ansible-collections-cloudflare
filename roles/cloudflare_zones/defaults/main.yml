@@ -1,4 +1,4 @@
 ---
-cloudflare_zones_default_state: present
-cloudflare_zones_default_jump_start: false
-cloudflare_zones_default_type: full
+cloudflare_zones_state: present
+cloudflare_zones_jump_start: false
+cloudflare_zones_type: full

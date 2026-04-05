@@ -36,7 +36,7 @@ argument_specs:
       cloudflare_tunnels_api_token:
         description: Cloudflare API token.
         type: str
-      cloudflare_tunnels_default_state:
+      cloudflare_tunnels_state:
         description: Default tunnel state.
         type: str
         choices:

@@ -8,9 +8,9 @@
     cloudflare_r2_bucket_account_email: "{{ cloudflare_r2_bucket.account_email | default(cloudflare_r2_buckets_account_email) | default(omit) }}"
     cloudflare_r2_bucket_account_api_key: "{{ cloudflare_r2_bucket.account_api_key | default(cloudflare_r2_buckets_account_api_key) | default(omit) }}"
     cloudflare_r2_bucket_api_token: "{{ cloudflare_r2_bucket.api_token | default(cloudflare_r2_buckets_api_token) | default(omit) }}"
-    cloudflare_r2_bucket_state: "{{ cloudflare_r2_bucket.state | default(cloudflare_r2_buckets_default_state) }}"
-    cloudflare_r2_bucket_location_hint: "{{ cloudflare_r2_bucket.location_hint | default(cloudflare_r2_buckets_default_location_hint) | default(omit) }}"
-    cloudflare_r2_bucket_storage_class: "{{ cloudflare_r2_bucket.storage_class | default(cloudflare_r2_buckets_default_storage_class) }}"
+    cloudflare_r2_bucket_state: "{{ cloudflare_r2_bucket.state | default(cloudflare_r2_buckets_state) }}"
+    cloudflare_r2_bucket_location_hint: "{{ cloudflare_r2_bucket.location_hint | default(cloudflare_r2_buckets_location_hint) | default(omit) }}"
+    cloudflare_r2_bucket_storage_class: "{{ cloudflare_r2_bucket.storage_class | default(cloudflare_r2_buckets_storage_class) }}"
   loop: "{{ cloudflare_r2_buckets }}"
   loop_control:
     label: "{{ cloudflare_r2_bucket_name }}"

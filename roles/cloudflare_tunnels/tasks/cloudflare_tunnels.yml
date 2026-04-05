@@ -8,7 +8,7 @@
     cloudflare_tunnel_account_email: "{{ cloudflare_tunnel.account_email | default(cloudflare_tunnels_account_email) | default(omit) }}"
     cloudflare_tunnel_account_api_key: "{{ cloudflare_tunnel.account_api_key | default(cloudflare_tunnels_account_api_key) | default(omit) }}"
     cloudflare_tunnel_api_token: "{{ cloudflare_tunnel.api_token | default(cloudflare_tunnels_api_token) | default(omit) }}"
-    cloudflare_tunnel_state: "{{ cloudflare_tunnel.state | default(cloudflare_tunnels_default_state) }}"
+    cloudflare_tunnel_state: "{{ cloudflare_tunnel.state | default(cloudflare_tunnels_state) }}"
     cloudflare_tunnel_ingress: "{{ cloudflare_tunnel.ingress | default(omit) }}"
   loop: "{{ cloudflare_tunnels }}"
   loop_control:
