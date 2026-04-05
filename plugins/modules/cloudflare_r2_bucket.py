@@ -21,6 +21,7 @@ description:
   - 'Ensures Cloudflare R2 object storage buckets using the Cloudflare API, see the docs: U(https://developers.cloudflare.com/r2/).'
 extends_documentation_fragment:
   - damex.cloudflare.common
+  - damex.cloudflare.common.account
 attributes:
   check_mode:
     support: full
@@ -33,17 +34,6 @@ options:
     description:
       - Bucket name.
     required: true
-    type: str
-  account_id:
-    description:
-      - Cloudflare account identifier.
-      - Required if O(account_name) is not provided.
-    type: str
-  account_name:
-    description:
-      - Cloudflare account name.
-      - Required if O(account_id) is not provided.
-      - Resolved to account identifier via the Cloudflare API.
     type: str
   state:
     description:
