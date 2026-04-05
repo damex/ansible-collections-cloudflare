@@ -84,6 +84,24 @@ argument_specs:
           cloudflare_api_token:
             description: Cloudflare API token.
             type: str
+          account_key_passphrase:
+            description: ACME account key passphrase.
+            type: str
+          certificate_directory:
+            description: Certificate directory.
+            type: str
+          account_key_file:
+            description: ACME account key file.
+            type: path
+          account_email:
+            description: ACME account email.
+            type: str
+          user:
+            description: Certificate file owner.
+            type: str
+          directory_url:
+            description: ACME directory URL.
+            type: str
           domains:
             description: Certificate domains.
             required: true

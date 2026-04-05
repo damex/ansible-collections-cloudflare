@@ -4,9 +4,5 @@
     - cloudflare
     - cloudflare_acme
   block:
-    - name: Ensure cloudflare acme directory
-      ansible.builtin.import_tasks: cloudflare_acme_directory.yml
-    - name: Ensure cloudflare acme account
-      ansible.builtin.import_tasks: cloudflare_acme_account.yml
     - name: Ensure cloudflare acme zones
       ansible.builtin.import_tasks: cloudflare_acme_zones.yml
