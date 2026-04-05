@@ -16,6 +16,18 @@
     owner: "{{ cloudflare_acme_zone_user }}"
   become: true
 
+- name: Ensure cloudflare acme account
+  community.crypto.acme_account:
+    account_key: "{{ cloudflare_acme_zone_account_key_file }}"
+    account_key_passphrase: "{{ cloudflare_acme_zone_account_key_passphrase | default(omit) }}"
+    acme_version: "{{ cloudflare_acme_api_version }}"
+    acme_directory: "{{ cloudflare_acme_zone_directory_url }}"
+    terms_agreed: "{{ cloudflare_acme_terms_agreed }}"
+    contact: "{{ ['mailto:' + cloudflare_acme_zone_account_email] if cloudflare_acme_zone_account_email is iterable else omit }}"
+    state: present
+  become: true
+  become_user: "{{ cloudflare_acme_zone_user }}"
+
 - name: Ensure cloudflare acme zone domain certificates
   ansible.builtin.include_tasks: cloudflare_acme_zone_domain_certificates.yml
   vars:
