@@ -9,6 +9,9 @@ Ansible collection for [Cloudflare](https://www.cloudflare.com/).
 
 | Module | Description |
 |--------|-------------|
+| `cloudflare_email_routing` | Ensure Cloudflare email routing |
+| `cloudflare_email_routing_address` | Ensure Cloudflare email routing destination address |
+| `cloudflare_email_routing_rule` | Ensure Cloudflare email routing rule |
 | `cloudflare_r2_bucket` | Ensure Cloudflare R2 bucket |
 | `cloudflare_zone` | Ensure Cloudflare zone |
 
@@ -18,6 +21,7 @@ Ansible collection for [Cloudflare](https://www.cloudflare.com/).
 |------|-------------|
 | `cloudflare_acme` | Ensure Cloudflare ACME |
 | `cloudflare_dns` | Ensure Cloudflare DNS |
+| `cloudflare_email_routing` | Ensure Cloudflare email routing |
 | `cloudflare_r2_buckets` | Ensure Cloudflare R2 buckets |
 | `cloudflare_zones` | Ensure Cloudflare zones |
 
