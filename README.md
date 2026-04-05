@@ -16,6 +16,7 @@ Ansible collection for [Cloudflare](https://www.cloudflare.com/).
 | `cloudflare_dns_records` | Ensure Cloudflare DNS records for a zone (batch) |
 | `cloudflare_pages_project` | Ensure Cloudflare Pages project |
 | `cloudflare_r2_bucket` | Ensure Cloudflare R2 bucket |
+| `cloudflare_r2_bucket_info` | Ensure Cloudflare R2 bucket information is gathered |
 | `cloudflare_tunnel` | Ensure Cloudflare tunnel |
 | `cloudflare_tunnel_info` | Ensure Cloudflare tunnel information is gathered |
 | `cloudflare_zone` | Ensure Cloudflare zone |
