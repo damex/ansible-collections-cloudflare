@@ -1,0 +1,7 @@
+---
+- name: Ensure cloudflare email routing rules
+  ansible.builtin.include_tasks: cloudflare_email_routing_rule.yml
+  loop: "{{ cloudflare_email_routing_rules }}"
+  loop_control:
+    label: "{{ cloudflare_email_routing_rule.name }}"
+    loop_var: cloudflare_email_routing_rule

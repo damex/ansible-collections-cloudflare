@@ -1,0 +1,127 @@
+---
+argument_specs:
+  main:
+    short_description: Ensure Cloudflare email routing.
+    description:
+      - Ensure Cloudflare email routing destination addresses, settings, and rules.
+    examples: |
+      - name: Ensure cloudflare email routing
+        hosts: all
+        tasks:
+          - name: Ensure cloudflare email routing
+            ansible.builtin.import_role:
+              name: damex.cloudflare.cloudflare_email_routing
+            vars:
+              cloudflare_email_routing_zone_name: example.com
+              cloudflare_email_routing_account_id: 023e105f4ecef8ad9ca31a8372d0c353
+              cloudflare_email_routing_api_token: "{{ cloudflare_api_token }}"
+              cloudflare_email_routing_destination_addresses:
+                - user@gmail.com
+              cloudflare_email_routing_rules:
+                - name: catch-all
+                  matchers:
+                    - type: all
+                  actions:
+                    - type: forward
+                      value:
+                        - user@gmail.com
+    options:
+      cloudflare_email_routing_zone_id:
+        description: Zone identifier.
+        type: str
+      cloudflare_email_routing_zone_name:
+        description: Zone domain name.
+        type: str
+      cloudflare_email_routing_account_id:
+        description: Cloudflare account identifier.
+        type: str
+      cloudflare_email_routing_account_name:
+        description: Cloudflare account name.
+        type: str
+      cloudflare_email_routing_account_email:
+        description: Cloudflare account email.
+        type: str
+      cloudflare_email_routing_account_api_key:
+        description: Cloudflare account API key.
+        type: str
+      cloudflare_email_routing_api_token:
+        description: Cloudflare API token.
+        type: str
+      cloudflare_email_routing_enabled:
+        description: Email routing enabled state.
+        type: bool
+      cloudflare_email_routing_default_rule_state:
+        description: Default rule state.
+        type: str
+        choices:
+          - absent
+          - present
+      cloudflare_email_routing_default_rule_enabled:
+        description: Default rule enabled state.
+        type: bool
+      cloudflare_email_routing_destination_addresses:
+        description: Destination email addresses to ensure.
+        required: true
+        type: list
+        elements: str
+      cloudflare_email_routing_rules:
+        description: Routing rules to ensure.
+        required: true
+        type: list
+        elements: dict
+        options:
+          name:
+            description: Rule name.
+            required: true
+            type: str
+          state:
+            description: Rule state.
+            type: str
+            choices:
+              - absent
+              - present
+          enabled:
+            description: Rule enabled state.
+            type: bool
+          priority:
+            description: Rule execution priority.
+            type: int
+          matchers:
+            description: Matching patterns.
+            required: true
+            type: list
+            elements: dict
+            options:
+              type:
+                description: Matcher type.
+                required: true
+                type: str
+                choices:
+                  - all
+                  - literal
+              field:
+                description: Matcher field.
+                type: str
+                choices:
+                  - to
+              value:
+                description: Matcher value.
+                type: str
+          actions:
+            description: Actions to take on matched email.
+            required: true
+            type: list
+            elements: dict
+            options:
+              type:
+                description: Action type.
+                required: true
+                type: str
+                choices:
+                  - drop
+                  - forward
+                  - worker
+              value:
+                description: Action destination addresses.
+                type: list
+                elements: str

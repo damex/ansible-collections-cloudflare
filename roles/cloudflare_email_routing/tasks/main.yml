@@ -1,0 +1,12 @@
+---
+- name: Ensure cloudflare email routing
+  tags:
+    - cloudflare
+    - cloudflare_email_routing
+  block:
+    - name: Ensure cloudflare email routing destination addresses
+      ansible.builtin.import_tasks: cloudflare_email_routing_addresses.yml
+    - name: Ensure cloudflare email routing rules
+      ansible.builtin.import_tasks: cloudflare_email_routing_rules.yml
+    - name: Ensure cloudflare email routing
+      ansible.builtin.import_tasks: cloudflare_email_routing.yml
