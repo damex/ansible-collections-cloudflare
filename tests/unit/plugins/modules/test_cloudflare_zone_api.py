@@ -12,6 +12,7 @@ from unittest.mock import MagicMock
 
 from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare import (
     cloudflare_get_account,
+    cloudflare_get_zone,
 )
 from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare_client import (
     cloudflare_create_client,
@@ -53,7 +54,7 @@ def test_get_zone_found() -> None:
     """cloudflare_get_zone returns the zone dict when found."""
     client = mock_cloudflare_client()
     client.get.return_value = {'result': [ZONE]}
-    result = cloudflare_zone.cloudflare_get_zone(client, 'example.com')
+    result = cloudflare_get_zone(client, 'example.com')
     assert result is not None
     assert result['name'] == 'example.com'
     client.get.assert_called_once_with(
@@ -66,7 +67,7 @@ def test_get_zone_not_found() -> None:
     """cloudflare_get_zone returns None when the zone does not exist."""
     client = mock_cloudflare_client()
     client.get.return_value = {'result': []}
-    result = cloudflare_zone.cloudflare_get_zone(client, 'example.com')
+    result = cloudflare_get_zone(client, 'example.com')
     assert result is None
 
 
@@ -122,7 +123,7 @@ def test_delete_zone_endpoint() -> None:
 
 
 def test_get_zone_setting_returns_value() -> None:
-    """cloudflare_get_zone_setting extracts the value field from the settings response."""
+    """cloudflare_zone.cloudflare_get_zone_setting extracts the value field from the settings response."""
     client = mock_cloudflare_client()
     client.get.return_value = {'result': {'id': 'ssl', 'value': 'full'}}
     result = cloudflare_zone.cloudflare_get_zone_setting(client, 'zone-id-123', 'ssl')

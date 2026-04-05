@@ -28,6 +28,9 @@ __all__ = [
     'mock_cloudflare_client',
     'cloudflare_mock',
     'r2_mock',
+    'email_routing_mock',
+    'address_mock',
+    'rule_mock',
     'set_module_args',
 ]
 
@@ -200,6 +203,67 @@ def r2_mock() -> Generator[MagicMock, None, None]:
     client = mock_cloudflare_client()
     with patch(
         f'{CLOUDFLARE_R2_MODULE}.cloudflare_create_client',
+        return_value=client,
+    ):
+        yield client
+
+
+CLOUDFLARE_EMAIL_ROUTING_MODULE = (
+    'ansible_collections.damex.cloudflare.plugins.modules.cloudflare_email_routing'
+)
+
+CLOUDFLARE_EMAIL_ADDRESS_MODULE = (
+    'ansible_collections.damex.cloudflare.plugins.modules.cloudflare_email_routing_address'
+)
+
+CLOUDFLARE_EMAIL_RULE_MODULE = (
+    'ansible_collections.damex.cloudflare.plugins.modules.cloudflare_email_routing_rule'
+)
+
+
+@pytest.fixture
+def email_routing_mock() -> Generator[MagicMock, None, None]:
+    """
+    Patch cloudflare_create_client for email routing tests.
+
+    >>> type(next(email_routing_mock()))
+    <class 'unittest.mock.MagicMock'>
+    """
+    client = mock_cloudflare_client()
+    with patch(
+        f'{CLOUDFLARE_EMAIL_ROUTING_MODULE}.cloudflare_create_client',
+        return_value=client,
+    ):
+        yield client
+
+
+@pytest.fixture
+def address_mock() -> Generator[MagicMock, None, None]:
+    """
+    Patch cloudflare_create_client for email address tests.
+
+    >>> type(next(address_mock()))
+    <class 'unittest.mock.MagicMock'>
+    """
+    client = mock_cloudflare_client()
+    with patch(
+        f'{CLOUDFLARE_EMAIL_ADDRESS_MODULE}.cloudflare_create_client',
+        return_value=client,
+    ):
+        yield client
+
+
+@pytest.fixture
+def rule_mock() -> Generator[MagicMock, None, None]:
+    """
+    Patch cloudflare_create_client for email rule tests.
+
+    >>> type(next(rule_mock()))
+    <class 'unittest.mock.MagicMock'>
+    """
+    client = mock_cloudflare_client()
+    with patch(
+        f'{CLOUDFLARE_EMAIL_RULE_MODULE}.cloudflare_create_client',
         return_value=client,
     ):
         yield client
