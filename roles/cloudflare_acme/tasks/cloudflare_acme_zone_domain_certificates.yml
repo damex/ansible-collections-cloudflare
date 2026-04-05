@@ -20,6 +20,7 @@
     account_email: "{{ cloudflare_acme_zone_account_email | default(omit) }}"
     account_key: "{{ cloudflare_acme_zone_account_key_file }}"
     account_key_passphrase: "{{ cloudflare_acme_zone_account_key_passphrase | default(omit) }}"
+    modify_account: false
     challenge: dns-01
     csr: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_zone_domain_name }}.csr"
     dest: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_zone_domain_name }}.crt"
@@ -59,6 +60,7 @@
         account_email: "{{ cloudflare_acme_zone_account_email | default(omit) }}"
         account_key: "{{ cloudflare_acme_zone_account_key_file }}"
         account_key_passphrase: "{{ cloudflare_acme_zone_account_key_passphrase | default(omit) }}"
+        modify_account: false
         challenge: dns-01
         csr: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_zone_domain_name }}.csr"
         dest: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_zone_domain_name }}.crt"
