@@ -23,14 +23,8 @@ description:
 extends_documentation_fragment:
   - damex.cloudflare.common
   - damex.cloudflare.common.zone
+  - damex.cloudflare.common.write_attributes
   - damex.cloudflare.common.dns_record
-attributes:
-  check_mode:
-    support: full
-    description: Supports check mode.
-  diff_mode:
-    support: full
-    description: Supports diff mode.
 """
 
 EXAMPLES = r"""

@@ -22,13 +22,7 @@ description:
 extends_documentation_fragment:
   - damex.cloudflare.common
   - damex.cloudflare.common.account
-attributes:
-  check_mode:
-    support: full
-    description: Supports check mode.
-  diff_mode:
-    support: none
-    description: Does not support diff mode.
+  - damex.cloudflare.common.info_attributes
 options:
   name:
     description:

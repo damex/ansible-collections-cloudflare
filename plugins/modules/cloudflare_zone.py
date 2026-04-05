@@ -21,13 +21,7 @@ description:
   - 'Ensures Cloudflare zones using the Cloudflare API, see the docs: U(https://api.cloudflare.com/).'
 extends_documentation_fragment:
   - damex.cloudflare.common
-attributes:
-  check_mode:
-    support: full
-    description: Supports check mode.
-  diff_mode:
-    support: none
-    description: Does not support diff mode.
+  - damex.cloudflare.common.info_attributes
 options:
   name:
     description:

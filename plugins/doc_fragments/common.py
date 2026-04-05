@@ -36,6 +36,26 @@ options:
     type: str
 """
 
+    WRITE_ATTRIBUTES = r"""
+attributes:
+  check_mode:
+    support: full
+    description: Supports check mode.
+  diff_mode:
+    support: full
+    description: Supports diff mode.
+"""
+
+    INFO_ATTRIBUTES = r"""
+attributes:
+  check_mode:
+    support: full
+    description: Supports check mode.
+  diff_mode:
+    support: none
+    description: Does not support diff mode.
+"""
+
     ACCOUNT = r"""
 options:
   account_id:
