@@ -18,7 +18,8 @@ author:
   - Roman Kuzmitskii (@damex)
 short_description: Ensure Cloudflare tunnel
 description:
-  - 'Ensures Cloudflare tunnels with ingress configuration, see the docs: U(https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/).'
+  - Ensures Cloudflare tunnels with ingress configuration.
+  - 'See the docs: U(https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/).'
   - Creates the tunnel if missing, updates ingress if changed, deletes if absent.
   - Returns the tunnel token for use with cloudflared.
 extends_documentation_fragment:
@@ -118,31 +119,12 @@ from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare_client
 from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare import (
     cloudflare_create_client,
     cloudflare_create_write_module,
+    cloudflare_find_tunnel,
+    cloudflare_get_tunnel_configuration,
+    cloudflare_get_tunnel_token,
     cloudflare_resolve_account_id,
     cloudflare_run_write_module,
 )
-
-
-def cloudflare_find_tunnel(
-    client: CloudflareClient,
-    account_id: str,
-    name: str,
-) -> dict[str, Any] | None:
-    """
-    Find a tunnel by name.
-
-    >>> cloudflare_find_tunnel(client, 'acct-id', 'my-tunnel')
-    {'id': '...', 'name': 'my-tunnel', 'status': 'healthy'}
-    """
-    response = client.get(
-        f'/accounts/{account_id}/cfd_tunnel',
-        params={
-            'name': name,
-            'is_deleted': 'false',
-        },
-    )
-    tunnels: list[dict[str, Any]] = response.get('result', [])
-    return next(iter(tunnels), None)
 
 
 def cloudflare_create_tunnel(
@@ -178,43 +160,6 @@ def cloudflare_delete_tunnel(
     >>> cloudflare_delete_tunnel(client, 'acct-id', 'tunnel-id')
     """
     client.delete(f'/accounts/{account_id}/cfd_tunnel/{tunnel_id}')
-
-
-def cloudflare_get_tunnel_token(
-    client: CloudflareClient,
-    account_id: str,
-    tunnel_id: str,
-) -> str:
-    """
-    Get tunnel run token.
-
-    >>> cloudflare_get_tunnel_token(client, 'acct-id', 'tunnel-id')
-    'eyJ...'
-    """
-    response = client.get(
-        f'/accounts/{account_id}/cfd_tunnel/{tunnel_id}/token',
-    )
-    token: str = response.get('result', '')
-    return token
-
-
-def cloudflare_get_tunnel_configuration(
-    client: CloudflareClient,
-    account_id: str,
-    tunnel_id: str,
-) -> dict[str, Any]:
-    """
-    Get tunnel ingress configuration.
-
-    >>> cloudflare_get_tunnel_configuration(client, 'acct-id', 'tunnel-id')
-    {'ingress': [{'hostname': 'app.example.com', 'service': 'http://localhost:8080'}]}
-    """
-    response = client.get(
-        f'/accounts/{account_id}/cfd_tunnel/{tunnel_id}/configurations',
-    )
-    result = response.get('result', {})
-    configuration: dict[str, Any] = result.get('config', {})
-    return configuration
 
 
 def cloudflare_set_tunnel_configuration(

@@ -18,7 +18,8 @@ author:
   - Roman Kuzmitskii (@damex)
 short_description: Ensure Cloudflare tunnel facts are gathered
 description:
-  - 'Gathers Cloudflare tunnel information including the run token, see the docs: U(https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/).'
+  - Gathers Cloudflare tunnel information including the run token.
+  - 'See the docs: U(https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/).'
 extends_documentation_fragment:
   - damex.cloudflare.common
   - damex.cloudflare.common.account
@@ -83,13 +84,11 @@ from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare_client
 from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare import (
     cloudflare_create_client,
     cloudflare_create_info_module,
-    cloudflare_resolve_account_id,
-    cloudflare_run_info_module,
-)
-from ansible_collections.damex.cloudflare.plugins.modules.cloudflare_tunnel import (
     cloudflare_find_tunnel,
     cloudflare_get_tunnel_configuration,
     cloudflare_get_tunnel_token,
+    cloudflare_resolve_account_id,
+    cloudflare_run_info_module,
 )
 
 

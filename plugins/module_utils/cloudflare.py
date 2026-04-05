@@ -25,7 +25,10 @@ __all__ = [
     'cloudflare_create_client',
     'cloudflare_create_info_module',
     'cloudflare_create_write_module',
+    'cloudflare_find_tunnel',
     'cloudflare_get_account',
+    'cloudflare_get_tunnel_configuration',
+    'cloudflare_get_tunnel_token',
     'cloudflare_get_zone',
     'cloudflare_resolve_account_id',
     'cloudflare_resolve_zone_id',
@@ -220,3 +223,62 @@ def cloudflare_run_info_module(
         implementation()
     except CloudflareClientException as exception:
         module.fail_json(msg=str(exception))
+
+
+def cloudflare_find_tunnel(
+    client: CloudflareClient,
+    account_id: str,
+    name: str,
+) -> dict[str, Any] | None:
+    """
+    Find a tunnel by name.
+
+    >>> cloudflare_find_tunnel(client, 'acct-id', 'my-tunnel')
+    {'id': '...', 'name': 'my-tunnel', 'status': 'healthy'}
+    """
+    response = client.get(
+        f'/accounts/{account_id}/cfd_tunnel',
+        params={
+            'name': name,
+            'is_deleted': 'false',
+        },
+    )
+    tunnels: list[dict[str, Any]] = response.get('result', [])
+    return next(iter(tunnels), None)
+
+
+def cloudflare_get_tunnel_token(
+    client: CloudflareClient,
+    account_id: str,
+    tunnel_id: str,
+) -> str:
+    """
+    Get tunnel run token.
+
+    >>> cloudflare_get_tunnel_token(client, 'acct-id', 'tunnel-id')
+    'eyJ...'
+    """
+    response = client.get(
+        f'/accounts/{account_id}/cfd_tunnel/{tunnel_id}/token',
+    )
+    token: str = response.get('result', '')
+    return token
+
+
+def cloudflare_get_tunnel_configuration(
+    client: CloudflareClient,
+    account_id: str,
+    tunnel_id: str,
+) -> dict[str, Any]:
+    """
+    Get tunnel ingress configuration.
+
+    >>> cloudflare_get_tunnel_configuration(client, 'acct-id', 'tunnel-id')
+    {'ingress': [{'service': 'http_status:404'}]}
+    """
+    response = client.get(
+        f'/accounts/{account_id}/cfd_tunnel/{tunnel_id}/configurations',
+    )
+    result = response.get('result', {})
+    configuration: dict[str, Any] = result.get('config', {})
+    return configuration
