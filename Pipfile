@@ -7,7 +7,7 @@ verify_ssl = true
 
 [packages]
 ansible-core = "==2.20.3"
-ansible-lint = "==26.3.0"
+ansible-lint = "==26.4.0"
 yamllint = "==1.38.0"
 pylint = {extras = ["spelling"], version = "==4.0.5"}
 pylint-pytest = "==1.1.8"
