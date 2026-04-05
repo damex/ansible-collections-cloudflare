@@ -23,6 +23,7 @@ description:
 extends_documentation_fragment:
   - damex.cloudflare.common
   - damex.cloudflare.common.zone
+  - damex.cloudflare.common.dns_record
 attributes:
   check_mode:
     support: full
@@ -30,65 +31,6 @@ attributes:
   diff_mode:
     support: full
     description: Supports diff mode.
-options:
-  record:
-    description:
-      - DNS record name (subdomain or @ for zone apex).
-    required: true
-    type: str
-  type:
-    description:
-      - DNS record type.
-    required: true
-    type: str
-    choices:
-      - A
-      - AAAA
-      - CAA
-      - CNAME
-      - DS
-      - HTTPS
-      - MX
-      - NAPTR
-      - NS
-      - PTR
-      - SMIMEA
-      - SRV
-      - SSHFP
-      - SVCB
-      - TLSA
-      - TXT
-      - URI
-  content:
-    description:
-      - DNS record content.
-      - Required when O(state) is C(present).
-    type: str
-  ttl:
-    description:
-      - DNS record TTL in seconds.
-      - Value of 1 means automatic.
-    type: int
-    default: 1
-  priority:
-    description:
-      - DNS record priority.
-      - Required for MX and URI records.
-    type: int
-  proxied:
-    description:
-      - Cloudflare proxy status.
-      - Only applicable to A, AAAA, and CNAME records.
-    type: bool
-    default: false
-  state:
-    description:
-      - DNS record state.
-    type: str
-    choices:
-      - absent
-      - present
-    default: present
 """
 
 EXAMPLES = r"""
