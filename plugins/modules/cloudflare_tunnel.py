@@ -103,10 +103,6 @@ tunnel:
       description: Tunnel status.
       returned: success
       type: str
-    token:
-      description: Tunnel run token for cloudflared.
-      returned: success
-      type: str
 """
 
 from typing import Any
@@ -121,7 +117,6 @@ from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare import
     cloudflare_create_write_module,
     cloudflare_find_tunnel,
     cloudflare_get_tunnel_configuration,
-    cloudflare_get_tunnel_token,
     cloudflare_resolve_account_id,
     cloudflare_run_write_module,
 )
@@ -262,8 +257,6 @@ def cloudflare_ensure_tunnel_present(
             tunnel['id'],
             desired_ingress,
         )
-        token = cloudflare_get_tunnel_token(client, account_id, tunnel['id'])
-        tunnel['token'] = token
         module.exit_json(
             changed=True,
             tunnel=tunnel,
@@ -282,13 +275,10 @@ def cloudflare_ensure_tunnel_present(
     current_ingress = current_configuration.get('ingress', [])
 
     if _ingress_matches(current_ingress, desired_ingress):
-        token = cloudflare_get_tunnel_token(client, account_id, tunnel['id'])
-        tunnel['token'] = token
         module.exit_json(changed=False, tunnel=tunnel)
         return
 
     if module.check_mode:
-        tunnel['token'] = ''
         module.exit_json(
             changed=True,
             tunnel=tunnel,
@@ -305,8 +295,6 @@ def cloudflare_ensure_tunnel_present(
         tunnel['id'],
         desired_ingress,
     )
-    token = cloudflare_get_tunnel_token(client, account_id, tunnel['id'])
-    tunnel['token'] = token
     module.exit_json(
         changed=True,
         tunnel=tunnel,
