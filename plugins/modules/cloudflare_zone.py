@@ -175,26 +175,9 @@ from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare import
     cloudflare_create_client,
     cloudflare_create_write_module,
     cloudflare_get_account,
+    cloudflare_get_zone,
     cloudflare_run_write_module,
 )
-
-
-def cloudflare_get_zone(
-    client: CloudflareClient,
-    name: str,
-) -> dict[str, Any] | None:
-    """
-    Look up a zone by name.
-
-    >>> cloudflare_get_zone(client, 'example.com')
-    {'id': '...', 'name': 'example.com', 'status': 'active', 'type': 'full'}
-    """
-    response = client.get(
-        '/zones',
-        params={'name': name},
-    )
-    zones = response.get('result', [])
-    return next(iter(zones), None)
 
 
 def cloudflare_create_zone(

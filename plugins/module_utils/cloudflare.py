@@ -25,7 +25,9 @@ __all__ = [
     'cloudflare_create_client',
     'cloudflare_create_write_module',
     'cloudflare_get_account',
+    'cloudflare_get_zone',
     'cloudflare_resolve_account_id',
+    'cloudflare_resolve_zone_id',
     'cloudflare_run_write_module',
 ]
 
@@ -46,6 +48,50 @@ CLOUDFLARE_COMMON_REQUIRED_TOGETHER: list[list[str]] = [
 CLOUDFLARE_COMMON_REQUIRED_ONE_OF: list[list[str]] = [
     ['api_token', 'account_api_key'],
 ]
+
+
+def cloudflare_get_zone(
+    client: CloudflareClient,
+    name: str,
+) -> dict[str, Any] | None:
+    """
+    Look up a zone by name.
+
+    >>> cloudflare_get_zone(client, 'example.com')
+    {'id': '...', 'name': 'example.com', 'status': 'active', 'type': 'full'}
+    """
+    response = client.get(
+        '/zones',
+        params={'name': name},
+    )
+    zones = response.get('result', [])
+    return next(iter(zones), None)
+
+
+def cloudflare_resolve_zone_id(
+    client: CloudflareClient,
+    zone_id: str | None,
+    zone_name: str | None,
+) -> str:
+    """
+    Resolve zone identifier from zone_id or zone_name.
+
+    >>> cloudflare_resolve_zone_id(client, 'zone-123', None)
+    'zone-123'
+    """
+    if zone_id:
+        return zone_id
+    if not zone_name:
+        raise CloudflareClientException(
+            'either zone_id or zone_name is required'
+        )
+    zone = cloudflare_get_zone(client, zone_name)
+    if not zone:
+        raise CloudflareClientException(
+            f"zone '{zone_name}' not found"
+        )
+    resolved_zone_id: str = zone['id']
+    return resolved_zone_id
 
 
 def cloudflare_get_account(

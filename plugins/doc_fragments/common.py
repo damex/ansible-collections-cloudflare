@@ -35,3 +35,33 @@ options:
       - Required together with O(account_email) if O(api_token) is not provided.
     type: str
 """
+
+    ACCOUNT = r"""
+options:
+  account_id:
+    description:
+      - Cloudflare account identifier.
+      - Required if O(account_name) is not provided.
+    type: str
+  account_name:
+    description:
+      - Cloudflare account name.
+      - Required if O(account_id) is not provided.
+      - Resolved to account identifier via the Cloudflare API.
+    type: str
+"""
+
+    ZONE = r"""
+options:
+  zone_id:
+    description:
+      - Zone identifier.
+      - Required if O(zone_name) is not provided.
+    type: str
+  zone_name:
+    description:
+      - Zone domain name.
+      - Required if O(zone_id) is not provided.
+      - Resolved to zone identifier via the Cloudflare API.
+    type: str
+"""
