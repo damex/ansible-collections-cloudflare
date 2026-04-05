@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 """
-Ensure Cloudflare tunnel facts are gathered.
+Ensure Cloudflare tunnel information is gathered.
 """
 
 from __future__ import annotations
@@ -13,10 +13,10 @@ from __future__ import annotations
 __all__ = ["DOCUMENTATION", "EXAMPLES", "RETURN", "main"]
 
 DOCUMENTATION = r"""
-module: cloudflare_tunnel_facts
+module: cloudflare_tunnel_info
 author:
   - Roman Kuzmitskii (@damex)
-short_description: Ensure Cloudflare tunnel facts are gathered
+short_description: Ensure Cloudflare tunnel information is gathered
 description:
   - Gathers Cloudflare tunnel information including the run token.
   - 'See the docs: U(https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/).'
@@ -34,7 +34,7 @@ options:
 
 EXAMPLES = r"""
 - name: Ensure tunnel facts are gathered
-  damex.cloudflare.cloudflare_tunnel_facts:
+  damex.cloudflare.cloudflare_tunnel_info:
     name: hetzner
     account_name: damex
     api_token: "{{ cloudflare_api_token }}"
