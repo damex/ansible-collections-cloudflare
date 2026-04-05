@@ -17,7 +17,6 @@
 
 - name: Ensure cloudflare acme challenge
   community.crypto.acme_certificate:
-    account_email: "{{ cloudflare_acme_zone_account_email | default(omit) }}"
     account_key: "{{ cloudflare_acme_zone_account_key_file }}"
     account_key_passphrase: "{{ cloudflare_acme_zone_account_key_passphrase | default(omit) }}"
     modify_account: false
@@ -57,7 +56,6 @@
         - cloudflare_acme_certificate_challenge.authorizations[cloudflare_acme_certificate_challenge_domain].status == "pending"
     - name: Ensure cloudflare acme challenge is validated
       community.crypto.acme_certificate:
-        account_email: "{{ cloudflare_acme_zone_account_email | default(omit) }}"
         account_key: "{{ cloudflare_acme_zone_account_key_file }}"
         account_key_passphrase: "{{ cloudflare_acme_zone_account_key_passphrase | default(omit) }}"
         modify_account: false
