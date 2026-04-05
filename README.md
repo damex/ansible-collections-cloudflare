@@ -41,7 +41,7 @@ Or via `requirements.yml`:
 ```yaml
 collections:
   - name: damex.cloudflare
-    version: 1.1.1
+    version: 1.1.2
 ```
 
 ```
