@@ -52,9 +52,6 @@ argument_specs:
       cloudflare_acme_deactivate_authzs:
         description: ACME authorization deactivation after challenge.
         type: bool
-      cloudflare_acme_account_key_file:
-        description: ACME account key file.
-        type: path
       cloudflare_acme_account_key_passphrase:
         description: ACME account key passphrase.
         type: str
