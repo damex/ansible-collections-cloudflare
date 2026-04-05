@@ -12,6 +12,7 @@ Ansible collection for [Cloudflare](https://www.cloudflare.com/).
 | `cloudflare_email_routing` | Ensure Cloudflare email routing |
 | `cloudflare_email_routing_address` | Ensure Cloudflare email routing destination address |
 | `cloudflare_email_routing_rule` | Ensure Cloudflare email routing rule |
+| `cloudflare_dns_record` | Ensure Cloudflare DNS record |
 | `cloudflare_r2_bucket` | Ensure Cloudflare R2 bucket |
 | `cloudflare_zone` | Ensure Cloudflare zone |
 
@@ -20,7 +21,8 @@ Ansible collection for [Cloudflare](https://www.cloudflare.com/).
 | Role | Description |
 |------|-------------|
 | `cloudflare_acme` | Ensure Cloudflare ACME |
-| `cloudflare_dns` | Ensure Cloudflare DNS |
+| `cloudflare_dns` | Ensure Cloudflare DNS (legacy) |
+| `cloudflare_dns_records` | Ensure Cloudflare DNS records |
 | `cloudflare_email_routing` | Ensure Cloudflare email routing |
 | `cloudflare_r2_buckets` | Ensure Cloudflare R2 buckets |
 | `cloudflare_zones` | Ensure Cloudflare zones |
@@ -46,6 +48,39 @@ collections:
 
 ```
 ansible-galaxy collection install -r requirements.yml
+```
+
+## Migrating from `cloudflare_dns` to `cloudflare_dns_records`
+
+The `cloudflare_dns` role is legacy and requires `community.general` with `python3-cloudflare`.
+The `cloudflare_dns_records` role replaces it with no external dependencies and supports 17 record types.
+
+Per-type record lists (`a_records`, `mx_records`, etc.) are replaced by a single `records` list.
+Record fields are renamed: `name` becomes `record` (use `@` for zone apex), `value` becomes `content`.
+
+```yaml
+# Before (cloudflare_dns)
+cloudflare_dns_zones:
+  - name: example.com
+    a_records:
+      - name: www
+        value: 192.0.2.1
+    mx_records:
+      - name: example.com
+        value: mail.example.com
+        priority: 10
+
+# After (cloudflare_dns_records)
+cloudflare_dns_records_zones:
+  - name: example.com
+    records:
+      - record: www
+        type: A
+        content: 192.0.2.1
+      - record: "@"
+        type: MX
+        content: mail.example.com
+        priority: 10
 ```
 
 ## Documentation
