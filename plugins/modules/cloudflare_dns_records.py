@@ -78,6 +78,7 @@ from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare_client
     CloudflareClient,
 )
 from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare import (
+    cloudflare_build_record_name,
     cloudflare_create_client,
     cloudflare_create_write_module,
     cloudflare_resolve_zone_id,
@@ -113,21 +114,6 @@ def cloudflare_list_dns_records(
             break
         page = page + 1
     return all_records
-
-
-def cloudflare_build_record_name(
-    record: str,
-    zone_name: str,
-) -> str:
-    """
-    Build fully qualified record name.
-
-    >>> cloudflare_build_record_name('www', 'example.com')
-    'www.example.com'
-    """
-    if record == '@' or record == zone_name or record.endswith(f'.{zone_name}'):
-        return zone_name if record == '@' else record
-    return f'{record}.{zone_name}'
 
 
 def _find_current_record(

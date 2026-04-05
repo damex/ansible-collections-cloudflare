@@ -22,6 +22,7 @@ __all__ = [
     'CLOUDFLARE_COMMON_ARGS',
     'CLOUDFLARE_COMMON_REQUIRED_ONE_OF',
     'CLOUDFLARE_COMMON_REQUIRED_TOGETHER',
+    'cloudflare_build_record_name',
     'cloudflare_create_client',
     'cloudflare_create_info_module',
     'cloudflare_create_write_module',
@@ -53,6 +54,21 @@ CLOUDFLARE_COMMON_REQUIRED_TOGETHER: list[list[str]] = [
 CLOUDFLARE_COMMON_REQUIRED_ONE_OF: list[list[str]] = [
     ['api_token', 'account_api_key'],
 ]
+
+
+def cloudflare_build_record_name(
+    record: str,
+    zone_name: str,
+) -> str:
+    """
+    Build fully qualified record name.
+
+    >>> cloudflare_build_record_name('www', 'example.com')
+    'www.example.com'
+    """
+    if record == '@' or record == zone_name or record.endswith(f'.{zone_name}'):
+        return zone_name if record == '@' else record
+    return f'{record}.{zone_name}'
 
 
 def cloudflare_get_zone(

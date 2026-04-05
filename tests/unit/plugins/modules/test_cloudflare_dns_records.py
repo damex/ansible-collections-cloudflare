@@ -13,6 +13,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from ansible_collections.damex.cloudflare.plugins.module_utils.cloudflare import (
+    cloudflare_build_record_name,
+)
 from ansible_collections.damex.cloudflare.plugins.modules import (
     cloudflare_dns_records,
 )
@@ -377,7 +380,7 @@ def test_list_dns_records_pagination() -> None:
 
 def test_build_record_name_subdomain() -> None:
     """Subdomain gets zone appended."""
-    result = cloudflare_dns_records.cloudflare_build_record_name(
+    result = cloudflare_build_record_name(
         'www',
         'example.com',
     )
@@ -386,7 +389,7 @@ def test_build_record_name_subdomain() -> None:
 
 def test_build_record_name_apex() -> None:
     """@ resolves to zone name."""
-    result = cloudflare_dns_records.cloudflare_build_record_name(
+    result = cloudflare_build_record_name(
         '@',
         'example.com',
     )
