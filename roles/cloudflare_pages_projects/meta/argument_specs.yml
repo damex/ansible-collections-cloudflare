@@ -1,0 +1,90 @@
+---
+argument_specs:
+  main:
+    short_description: Ensure Cloudflare Pages projects.
+    description:
+      - Ensure Cloudflare Pages projects with build configuration and custom domains.
+    examples: |
+      - name: Ensure cloudflare Pages projects
+        hosts: all
+        tasks:
+          - name: Ensure cloudflare Pages projects
+            ansible.builtin.import_role:
+              name: damex.cloudflare.cloudflare_pages_projects
+            vars:
+              cloudflare_pages_projects_account_name: damex
+              cloudflare_pages_projects_api_token: "{{ cloudflare_api_token }}"
+              cloudflare_pages_projects:
+                - name: my-docs
+                  production_branch: production
+                  domains:
+                    - docs.example.com
+    options:
+      cloudflare_pages_projects_account_id:
+        description: Cloudflare account identifier.
+        type: str
+      cloudflare_pages_projects_account_name:
+        description: Cloudflare account name.
+        type: str
+      cloudflare_pages_projects_account_email:
+        description: Cloudflare account email.
+        type: str
+      cloudflare_pages_projects_account_api_key:
+        description: Cloudflare account API key.
+        type: str
+      cloudflare_pages_projects_api_token:
+        description: Cloudflare API token.
+        type: str
+      cloudflare_pages_projects_state:
+        description: Default project state.
+        type: str
+        choices:
+          - absent
+          - present
+      cloudflare_pages_projects:
+        description: Pages projects to ensure.
+        required: true
+        type: list
+        elements: dict
+        options:
+          name:
+            description: Project name.
+            required: true
+            type: str
+          account_id:
+            description: Cloudflare account identifier.
+            type: str
+          account_name:
+            description: Cloudflare account name.
+            type: str
+          account_email:
+            description: Cloudflare account email.
+            type: str
+          account_api_key:
+            description: Cloudflare account API key.
+            type: str
+          api_token:
+            description: Cloudflare API token.
+            type: str
+          state:
+            description: Project state.
+            type: str
+            choices:
+              - absent
+              - present
+          production_branch:
+            description: Production branch name.
+            type: str
+          build_command:
+            description: Build command.
+            type: str
+          destination_directory:
+            description: Build output directory.
+            type: str
+          root_directory:
+            description: Project root directory.
+            type: str
+          domains:
+            description: Custom domains.
+            type: list
+            elements: str

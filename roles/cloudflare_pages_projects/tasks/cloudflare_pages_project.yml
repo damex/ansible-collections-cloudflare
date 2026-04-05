@@ -1,0 +1,15 @@
+---
+- name: Ensure cloudflare Pages project {{ cloudflare_pages_project_name }}
+  damex.cloudflare.cloudflare_pages_project:
+    name: "{{ cloudflare_pages_project_name }}"
+    account_id: "{{ cloudflare_pages_project_account_id }}"
+    account_name: "{{ cloudflare_pages_project_account_name }}"
+    account_email: "{{ cloudflare_pages_project_account_email }}"
+    account_api_key: "{{ cloudflare_pages_project_account_api_key }}"
+    api_token: "{{ cloudflare_pages_project_api_token }}"
+    state: "{{ cloudflare_pages_project_state }}"
+    production_branch: "{{ cloudflare_pages_project_production_branch }}"
+    build_command: "{{ cloudflare_pages_project_build_command }}"
+    destination_directory: "{{ cloudflare_pages_project_destination_directory }}"
+    root_directory: "{{ cloudflare_pages_project_root_directory }}"
+    domains: "{{ cloudflare_pages_project_domains }}"

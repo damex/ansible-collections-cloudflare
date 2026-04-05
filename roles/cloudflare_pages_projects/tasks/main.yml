@@ -1,0 +1,8 @@
+---
+- name: Ensure cloudflare Pages projects
+  tags:
+    - cloudflare
+    - cloudflare_pages_projects
+  block:
+    - name: Ensure cloudflare Pages projects
+      ansible.builtin.import_tasks: cloudflare_pages_projects.yml

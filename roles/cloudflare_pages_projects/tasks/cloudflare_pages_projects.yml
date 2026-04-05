@@ -1,0 +1,20 @@
+---
+- name: Ensure cloudflare Pages projects
+  ansible.builtin.include_tasks: cloudflare_pages_project.yml
+  vars:
+    cloudflare_pages_project_name: "{{ cloudflare_pages_project.name }}"
+    cloudflare_pages_project_account_id: "{{ cloudflare_pages_project.account_id | default(cloudflare_pages_projects_account_id) | default(omit) }}"
+    cloudflare_pages_project_account_name: "{{ cloudflare_pages_project.account_name | default(cloudflare_pages_projects_account_name) | default(omit) }}"
+    cloudflare_pages_project_account_email: "{{ cloudflare_pages_project.account_email | default(cloudflare_pages_projects_account_email) | default(omit) }}"
+    cloudflare_pages_project_account_api_key: "{{ cloudflare_pages_project.account_api_key | default(cloudflare_pages_projects_account_api_key) | default(omit) }}"
+    cloudflare_pages_project_api_token: "{{ cloudflare_pages_project.api_token | default(cloudflare_pages_projects_api_token) | default(omit) }}"
+    cloudflare_pages_project_state: "{{ cloudflare_pages_project.state | default(cloudflare_pages_projects_state) }}"
+    cloudflare_pages_project_production_branch: "{{ cloudflare_pages_project.production_branch | default(omit) }}"
+    cloudflare_pages_project_build_command: "{{ cloudflare_pages_project.build_command | default(omit) }}"
+    cloudflare_pages_project_destination_directory: "{{ cloudflare_pages_project.destination_directory | default(omit) }}"
+    cloudflare_pages_project_root_directory: "{{ cloudflare_pages_project.root_directory | default(omit) }}"
+    cloudflare_pages_project_domains: "{{ cloudflare_pages_project.domains | default(omit) }}"
+  loop: "{{ cloudflare_pages_projects }}"
+  loop_control:
+    label: "{{ cloudflare_pages_project_name }}"
+    loop_var: cloudflare_pages_project
