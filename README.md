@@ -13,6 +13,7 @@ Ansible collection for [Cloudflare](https://www.cloudflare.com/).
 | `cloudflare_email_routing_address` | Ensure Cloudflare email routing destination address |
 | `cloudflare_email_routing_rule` | Ensure Cloudflare email routing rule |
 | `cloudflare_dns_record` | Ensure Cloudflare DNS record |
+| `cloudflare_dns_records` | Ensure Cloudflare DNS records for a zone (batch) |
 | `cloudflare_r2_bucket` | Ensure Cloudflare R2 bucket |
 | `cloudflare_zone` | Ensure Cloudflare zone |
 
