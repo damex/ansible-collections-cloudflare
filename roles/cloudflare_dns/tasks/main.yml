@@ -1,8 +1,0 @@
----
-- name: Ensure cloudflare dns
-  tags:
-    - cloudflare
-    - cloudflare_dns
-  block:
-    - name: Ensure cloudflare dns zones
-      ansible.builtin.import_tasks: cloudflare_dns_zones.yml

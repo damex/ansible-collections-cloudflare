@@ -1,4 +1,0 @@
----
-cloudflare_dns_default_record_proxied: false
-cloudflare_dns_default_record_state: present
-cloudflare_dns_default_record_ttl: 3600
