@@ -13,6 +13,7 @@
     cloudflare_acme_zone_account_email: "{{ cloudflare_acme_zone.account_email | default(cloudflare_acme_account_email) | default(omit) }}"
     cloudflare_acme_zone_user: "{{ cloudflare_acme_zone.user | default(cloudflare_acme_user) }}"
     cloudflare_acme_zone_directory_url: "{{ cloudflare_acme_zone.directory_url | default(cloudflare_acme_directory_url) }}"
+    cloudflare_acme_zone_deactivate_authzs: "{{ cloudflare_acme_zone.deactivate_authzs | default(cloudflare_acme_deactivate_authzs) }}"
   loop: "{{ cloudflare_acme_zones }}"
   loop_control:
     label: "{{ cloudflare_acme_zone_name }}"

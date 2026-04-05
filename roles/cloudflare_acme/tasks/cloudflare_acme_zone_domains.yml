@@ -19,10 +19,10 @@
 - name: Ensure cloudflare acme zone domain certificates
   ansible.builtin.include_tasks: cloudflare_acme_zone_domain_certificates.yml
   vars:
-    cloudflare_acme_domain_name: "{{ cloudflare_acme_zone_domain.name }}"
-    cloudflare_acme_domain_names: "{{ cloudflare_acme_zone_domain.names | default([]) }}"
-    cloudflare_acme_domain_deactivate_authzs: "{{ cloudflare_acme_zone_domain.deactivate_authzs | default(cloudflare_acme_deactivate_authzs) }}"
+    cloudflare_acme_zone_domain_name: "{{ cloudflare_acme_zone_domain.name }}"
+    cloudflare_acme_zone_domain_names: "{{ cloudflare_acme_zone_domain.names | default([]) }}"
+    cloudflare_acme_zone_domain_deactivate_authzs: "{{ cloudflare_acme_zone_domain.deactivate_authzs | default(cloudflare_acme_zone_deactivate_authzs) }}"
   loop: "{{ cloudflare_acme_zone_domains }}"
   loop_control:
-    label: "{{ cloudflare_acme_domain_name }}"
+    label: "{{ cloudflare_acme_zone_domain_name }}"
     loop_var: cloudflare_acme_zone_domain
