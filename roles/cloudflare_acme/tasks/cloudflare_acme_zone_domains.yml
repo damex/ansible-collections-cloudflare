@@ -1,4 +1,21 @@
 ---
+- name: Ensure cloudflare acme certificate directory
+  ansible.builtin.file:
+    path: "{{ cloudflare_acme_zone_certificate_directory }}"
+    mode: "0700"
+    state: directory
+    owner: "{{ cloudflare_acme_zone_user }}"
+  become: true
+
+- name: Ensure cloudflare acme account key
+  community.crypto.openssl_privatekey:
+    path: "{{ cloudflare_acme_zone_account_key_file }}"
+    mode: "0640"
+    passphrase: "{{ cloudflare_acme_zone_account_key_passphrase | default(omit) }}"
+    cipher: auto
+    owner: "{{ cloudflare_acme_zone_user }}"
+  become: true
+
 - name: Ensure cloudflare acme zone domain certificates
   ansible.builtin.include_tasks: cloudflare_acme_zone_domain_certificates.yml
   vars:

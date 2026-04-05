@@ -1,38 +1,38 @@
 ---
 - name: Ensure cloudflare acme domain key
   community.crypto.openssl_privatekey:
-    path: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.key"
+    path: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_domain_name }}.key"
     mode: "0640"
   become: true
-  become_user: "{{ cloudflare_acme_user }}"
+  become_user: "{{ cloudflare_acme_zone_user }}"
 
 - name: Ensure cloudflare acme csr
   community.crypto.openssl_csr:
-    path: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.csr"
-    privatekey_path: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.key"
+    path: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_domain_name }}.csr"
+    privatekey_path: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_domain_name }}.key"
     common_name: "{{ cloudflare_acme_domain_name }}"
     subject_alt_name: "{{ cloudflare_acme_domain_names | map('regex_replace', '^', 'DNS:') }}"
   become: true
-  become_user: "{{ cloudflare_acme_user }}"
+  become_user: "{{ cloudflare_acme_zone_user }}"
 
 - name: Ensure cloudflare acme challenge
   community.crypto.acme_certificate:
-    account_email: "{{ cloudflare_acme_account_email | default(omit) }}"
-    account_key: "{{ cloudflare_acme_account_key_file }}"
-    account_key_passphrase: "{{ cloudflare_acme_account_key_passphrase | default(omit) }}"
+    account_email: "{{ cloudflare_acme_zone_account_email | default(omit) }}"
+    account_key: "{{ cloudflare_acme_zone_account_key_file }}"
+    account_key_passphrase: "{{ cloudflare_acme_zone_account_key_passphrase | default(omit) }}"
     challenge: dns-01
-    csr: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.csr"
-    dest: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.crt"
-    fullchain_dest: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.chain.crt"
+    csr: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_domain_name }}.csr"
+    dest: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_domain_name }}.crt"
+    fullchain_dest: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_domain_name }}.chain.crt"
     remaining_days: "{{ cloudflare_acme_certificate_remaining_days }}"
     terms_agreed: "{{ cloudflare_acme_terms_agreed }}"
     acme_version: "{{ cloudflare_acme_api_version }}"
-    acme_directory: "{{ cloudflare_acme_directory_url }}"
+    acme_directory: "{{ cloudflare_acme_zone_directory_url }}"
   until: not cloudflare_acme_certificate_challenge.failed
   retries: "{{ cloudflare_acme_challenge_retries }}"
   register: cloudflare_acme_certificate_challenge
   become: true
-  become_user: "{{ cloudflare_acme_user }}"
+  become_user: "{{ cloudflare_acme_zone_user }}"
 
 - name: Ensure cloudflare acme dns challenge
   when:
@@ -56,25 +56,25 @@
         - cloudflare_acme_certificate_challenge.authorizations[cloudflare_acme_certificate_challenge_domain].status == "pending"
     - name: Ensure cloudflare acme challenge is validated
       community.crypto.acme_certificate:
-        account_email: "{{ cloudflare_acme_account_email | default(omit) }}"
-        account_key: "{{ cloudflare_acme_account_key_file }}"
-        account_key_passphrase: "{{ cloudflare_acme_account_key_passphrase | default(omit) }}"
+        account_email: "{{ cloudflare_acme_zone_account_email | default(omit) }}"
+        account_key: "{{ cloudflare_acme_zone_account_key_file }}"
+        account_key_passphrase: "{{ cloudflare_acme_zone_account_key_passphrase | default(omit) }}"
         challenge: dns-01
-        csr: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.csr"
-        dest: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.crt"
-        fullchain_dest: "{{ cloudflare_acme_certificate_directory }}/{{ cloudflare_acme_domain_name }}.chain.crt"
+        csr: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_domain_name }}.csr"
+        dest: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_domain_name }}.crt"
+        fullchain_dest: "{{ cloudflare_acme_zone_certificate_directory }}/{{ cloudflare_acme_domain_name }}.chain.crt"
         data: "{{ cloudflare_acme_certificate_challenge }}"
         remaining_days: "{{ cloudflare_acme_certificate_remaining_days }}"
         terms_agreed: "{{ cloudflare_acme_terms_agreed }}"
         acme_version: "{{ cloudflare_acme_api_version }}"
-        acme_directory: "{{ cloudflare_acme_directory_url }}"
+        acme_directory: "{{ cloudflare_acme_zone_directory_url }}"
         deactivate_authzs: "{{ cloudflare_acme_domain_deactivate_authzs }}"
       until:
         - "'pending' not in cloudflare_acme_domain_names + [cloudflare_acme_domain_name] | map('extract', cloudflare_acme_certificate_validate_challenge.authorizations) | map(attribute='challenges') | flatten | map(attribute='status')"
       retries: "{{ cloudflare_acme_challenge_retries }}"
       register: cloudflare_acme_certificate_validate_challenge
       become: true
-      become_user: "{{ cloudflare_acme_user }}"
+      become_user: "{{ cloudflare_acme_zone_user }}"
   always:
     - name: Ensure cloudflare dns challenge record is absent
       damex.cloudflare.cloudflare_dns_record:
