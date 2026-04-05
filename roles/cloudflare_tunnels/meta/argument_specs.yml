@@ -1,0 +1,90 @@
+---
+argument_specs:
+  main:
+    short_description: Ensure Cloudflare tunnels.
+    description:
+      - Ensure Cloudflare tunnels with ingress configuration.
+    examples: |
+      - name: Ensure cloudflare tunnels
+        hosts: all
+        tasks:
+          - name: Ensure cloudflare tunnels
+            ansible.builtin.import_role:
+              name: damex.cloudflare.cloudflare_tunnels
+            vars:
+              cloudflare_tunnels_account_name: damex
+              cloudflare_tunnels_api_token: "{{ cloudflare_api_token }}"
+              cloudflare_tunnels:
+                - name: hetzner
+                  ingress:
+                    - hostname: forgejo.damex.org
+                      service: http://localhost:3000
+                    - service: http_status:404
+    options:
+      cloudflare_tunnels_account_id:
+        description: Cloudflare account identifier.
+        type: str
+      cloudflare_tunnels_account_name:
+        description: Cloudflare account name.
+        type: str
+      cloudflare_tunnels_account_email:
+        description: Cloudflare account email.
+        type: str
+      cloudflare_tunnels_account_api_key:
+        description: Cloudflare account API key.
+        type: str
+      cloudflare_tunnels_api_token:
+        description: Cloudflare API token.
+        type: str
+      cloudflare_tunnels_default_state:
+        description: Default tunnel state.
+        type: str
+        choices:
+          - absent
+          - present
+      cloudflare_tunnels:
+        description: Tunnels to ensure.
+        required: true
+        type: list
+        elements: dict
+        options:
+          name:
+            description: Tunnel name.
+            required: true
+            type: str
+          account_id:
+            description: Cloudflare account identifier.
+            type: str
+          account_name:
+            description: Cloudflare account name.
+            type: str
+          account_email:
+            description: Cloudflare account email.
+            type: str
+          account_api_key:
+            description: Cloudflare account API key.
+            type: str
+          api_token:
+            description: Cloudflare API token.
+            type: str
+          state:
+            description: Tunnel state.
+            type: str
+            choices:
+              - absent
+              - present
+          ingress:
+            description: Ingress rules for the tunnel.
+            type: list
+            elements: dict
+            options:
+              hostname:
+                description: Hostname to match.
+                type: str
+              service:
+                description: Service URL or status code.
+                required: true
+                type: str
+              origin_request:
+                description: Origin request parameters.
+                type: dict

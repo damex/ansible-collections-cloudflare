@@ -1,0 +1,11 @@
+---
+- name: Ensure cloudflare tunnel {{ cloudflare_tunnel_name }}
+  damex.cloudflare.cloudflare_tunnel:
+    name: "{{ cloudflare_tunnel_name }}"
+    account_id: "{{ cloudflare_tunnel_account_id }}"
+    account_name: "{{ cloudflare_tunnel_account_name }}"
+    account_email: "{{ cloudflare_tunnel_account_email }}"
+    account_api_key: "{{ cloudflare_tunnel_account_api_key }}"
+    api_token: "{{ cloudflare_tunnel_api_token }}"
+    state: "{{ cloudflare_tunnel_state }}"
+    ingress: "{{ cloudflare_tunnel_ingress }}"

@@ -1,0 +1,8 @@
+---
+- name: Ensure cloudflare tunnels
+  tags:
+    - cloudflare
+    - cloudflare_tunnels
+  block:
+    - name: Ensure cloudflare tunnels
+      ansible.builtin.import_tasks: cloudflare_tunnels.yml
