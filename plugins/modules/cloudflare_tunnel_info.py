@@ -27,8 +27,8 @@ extends_documentation_fragment:
 options:
   name:
     description:
-      - Tunnel name.
-    required: true
+      - Tunnel name to query.
+      - If not specified, all tunnels are returned.
     type: str
 """
 
@@ -49,10 +49,11 @@ EXAMPLES = r"""
 """
 
 RETURN = r"""
-tunnel:
-  description: Gathered tunnel facts.
+tunnels:
+  description: Tunnel information.
   returned: always
-  type: dict
+  type: list
+  elements: dict
   contains:
     id:
       description: Tunnel unique identifier.
@@ -68,11 +69,11 @@ tunnel:
       type: str
     ingress:
       description: Current ingress rules.
-      returned: always
+      returned: when querying a specific tunnel
       type: list
     token:
       description: Tunnel authentication token for cloudflared.
-      returned: always
+      returned: when querying a specific tunnel
       type: str
 """
 
@@ -99,7 +100,7 @@ def main() -> None:
     >>> main()
     """
     argument_spec: dict[str, Any] = {
-        'name': {'type': 'str', 'required': True},
+        'name': {'type': 'str'},
         'account_id': {'type': 'str'},
         'account_name': {'type': 'str'},
     }
@@ -108,41 +109,43 @@ def main() -> None:
         required_one_of=[['account_id', 'account_name']],
     )
 
-    def _gather_tunnel_facts() -> None:
+    def _gather_tunnel_information() -> None:
         with cloudflare_create_client(module) as client:
             account_id = cloudflare_resolve_account_id(
                 client,
                 module.params.get('account_id'),
                 module.params.get('account_name'),
             )
-            name = module.params['name']
+            name = module.params.get('name')
 
-            tunnel = cloudflare_find_tunnel(client, account_id, name)
-            if not tunnel:
-                raise CloudflareClientException(
-                    f"tunnel '{name}' not found"
+            if name:
+                tunnel = cloudflare_find_tunnel(client, account_id, name)
+                if not tunnel:
+                    module.exit_json(tunnels=[])
+                    return
+                token = cloudflare_get_tunnel_token(
+                    client,
+                    account_id,
+                    tunnel['id'],
                 )
+                configuration = cloudflare_get_tunnel_configuration(
+                    client,
+                    account_id,
+                    tunnel['id'],
+                )
+                tunnel['token'] = token
+                tunnel['ingress'] = configuration.get('ingress', [])
+                module.exit_json(tunnels=[tunnel])
+                return
 
-            token = cloudflare_get_tunnel_token(
-                client,
-                account_id,
-                tunnel['id'],
+            response = client.get(
+                f'/accounts/{account_id}/cfd_tunnel',
+                params={'is_deleted': 'false'},
             )
-            configuration = cloudflare_get_tunnel_configuration(
-                client,
-                account_id,
-                tunnel['id'],
-            )
+            tunnels: list[dict[str, Any]] = response.get('result', [])
+            module.exit_json(tunnels=tunnels)
 
-            tunnel['token'] = token
-            tunnel['ingress'] = configuration.get('ingress', [])
-
-            module.exit_json(
-                changed=False,
-                tunnel=tunnel,
-            )
-
-    cloudflare_run_info_module(module, _gather_tunnel_facts)
+    cloudflare_run_info_module(module, _gather_tunnel_information)
 
 
 if __name__ == '__main__':
